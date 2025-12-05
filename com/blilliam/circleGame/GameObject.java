@@ -8,6 +8,7 @@ public class GameObject {
 	Player player1 = new Player(this);
 	ArrayList<Enemy> enemies = new ArrayList<Enemy>();
 	ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+	ArrayList<Coin> coins = new ArrayList<Coin>();
 	WaveSystem waves = new WaveSystem(this);
 	KeyboardInput keyH;
 	
@@ -22,6 +23,8 @@ public class GameObject {
 		
 		enemies.removeIf((e) -> e.isDead);
 		
+		coins.removeIf((e) -> e.isDead);
+		
 		player1.update();
 		
 		enemies.forEach(e -> {
@@ -35,7 +38,7 @@ public class GameObject {
 		});
 	}
 	public void draw(Graphics2D g2) {
-		g2.setColor(new Color(120, 120, 250));
+		g2.setColor(new Color(0, 0, 0));
 		g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
 		player1.draw(g2);
 		
@@ -45,6 +48,10 @@ public class GameObject {
 		
 		for (int i = 0; i < bullets.size(); i++) {
 			bullets.get(i).draw(g2);
+		}
+
+		for (int i = 0; i< coins.size(); i ++) {
+			coins.get(i).draw(g2);
 		}
 	}
 }

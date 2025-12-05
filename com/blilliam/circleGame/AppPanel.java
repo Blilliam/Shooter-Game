@@ -3,13 +3,16 @@ package com.blilliam.circleGame;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 
 import javax.swing.JPanel;
 
+
 public class AppPanel extends JPanel implements Runnable {
+	static Toolkit tk = Toolkit.getDefaultToolkit();
 	
-	public static final int WIDTH = 600;
-	public static final int HEIGHT = 700;
+	public static final int WIDTH = ((int) tk.getScreenSize().getWidth());
+	public static final int HEIGHT = ((int)tk.getScreenSize().getHeight()) - 38;
 	public Dimension d = new Dimension(WIDTH, HEIGHT);
 	public Thread t = new Thread(this);
 	KeyboardInput keyHandler = new KeyboardInput();

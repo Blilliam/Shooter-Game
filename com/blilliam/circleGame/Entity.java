@@ -1,8 +1,8 @@
 package com.blilliam.circleGame;
 
 public abstract class Entity {
-	private double x;
-	private double y;
+	public double x;
+	public double y;
 	
 	public boolean isDead = false;
 	

@@ -8,7 +8,7 @@ public class main {
 		// TODO Auto-generated method stub
 		JFrame frame = new JFrame("Window");
 		AppPanel app = new AppPanel();
-
+		frame.setExtendedState(frame.MAXIMIZED_BOTH);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(app);
 		frame.pack();
