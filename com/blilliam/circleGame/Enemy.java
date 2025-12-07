@@ -115,13 +115,12 @@ public class Enemy extends Entity {
 		if (flashTimer > 0) {
 			g2.setColor(Color.WHITE);
 		} else {
-			g2.setColor(new Color(255, g255, b255, 150);
+			g2.setColor(new Color(255, g255, b255, 150));
 		}
 
 		g2.fillArc((int) getX(), (int) getY(), radius * 2, radius * 2, 0, 360);
 
-		g2.setColor(new Color(r255, g255, b255, 100)
-		g2.fillArc((int) getX(), (int) getY(), radius, radius, 0, 360);
+		g2.setColor(new Color(r255, g255, b255, 100));
+		g2.fillArc((int) getX()+radius/2, (int) getY()+radius/2, radius, radius, 0, 360);
 	}
 }
-

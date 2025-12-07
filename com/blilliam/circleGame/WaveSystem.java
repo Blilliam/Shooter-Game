@@ -12,10 +12,13 @@ public class WaveSystem {
 	}
 	
 	public void update() {
-		if (gameObj.enemies.size() == 0) {
+		if (gameObj.enemies.size() == 0 && gameObj.upgrades.isUpgrading == false) {
 			waveNum++;
+			if (waveNum == 2) {
+				gameObj.upgrades.isUpgrading = true;
+			}
 			createEnemies();
-		}
+		} 
 	}
 	
 	public void createEnemies() {

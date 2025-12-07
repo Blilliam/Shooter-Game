@@ -9,7 +9,7 @@ public class Player extends Entity {
 	public int playerTeir = 1;
 	public int score = 0;
 	public int health = 5;
-	public int speed = 5;
+	public int speed = 10;
 	public boolean isHit = false;
 	private long timer = 0;
 	private long delay = 400;
@@ -188,10 +188,6 @@ public class Player extends Entity {
 			g2.setColor(overlayWhite);
 			g2.fillOval((int) getX(), (int) getY(), this.radius * 2, this.radius * 2);
 		}
-		g2.setColor(Color.WHITE);
-		g2.setFont(new Font("Malgum Gothic", Font.PLAIN, 30));
-		g2.drawString("Score: " + gameObj.player1.score, AppPanel.WIDTH / 2 - 50, 30);
-		g2.drawString("Wave Number: " + WaveSystem.waveNum, AppPanel.WIDTH / 2 - 100, 60);
-		g2.drawString("Coins: " + totalCoins, AppPanel.WIDTH / 2 - 50, 90);
+		
 	}
 }

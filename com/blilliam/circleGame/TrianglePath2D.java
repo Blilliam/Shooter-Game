@@ -1,11 +1,12 @@
+package com.blilliam.circleGame;
+
 import java.awt.*;
 import java.awt.geom.Path2D;
 import javax.swing.*;
 
 public class TrianglePath2D extends JPanel {
 
-    @Override
-    public void paintComponent(Graphics g, double[] pt1, double[] pt2, double pt3) {
+    public void paintComponent(Graphics g, double[] pt1, double[] pt2, double[] pt3) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 

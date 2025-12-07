@@ -17,12 +17,15 @@ public class AppPanel extends JPanel implements Runnable {
 	public Thread t = new Thread(this);
 	KeyboardInput keyHandler = new KeyboardInput();
 	GameObject gameObj = new GameObject(keyHandler);
+	MouseInput mouseHandler;
 	
 	// Constructor
 	public AppPanel() {
 		setPreferredSize(d);
 		addKeyListener(keyHandler);
 		setFocusable(true);
+		mouseHandler = new MouseInput(gameObj);
+        addMouseListener(mouseHandler);
 		t.start();
 	}
 	

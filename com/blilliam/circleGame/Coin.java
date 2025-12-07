@@ -1,6 +1,8 @@
 package com.blilliam.circleGame;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 public class Coin extends Entity{
@@ -22,7 +24,24 @@ public class Coin extends Entity{
 	}
 	
 	public void draw(Graphics2D g2) {
-		g2.setColor(Color.YELLOW);
-		g2.fillArc((int) getX(), (int) getY(), radius * 2, radius * 2, 0, 360);
+	    g2.setColor(Color.YELLOW);
+	    g2.fillArc((int) getX(), (int) getY(), radius * 2, radius * 2, 0, 360);
+
+	    String label = "" + value;
+	    g2.setColor(new Color(165, 42, 42));
+	    g2.setFont(new Font("Arial", Font.BOLD, 24));
+
+	    FontMetrics fm = g2.getFontMetrics();
+	    int textWidth = fm.stringWidth(label);
+	    int textHeight = fm.getHeight();
+
+	    // Circle width/height = radius * 2
+	    int diameter = radius * 2;
+
+	    int textX = (int) (x + (diameter - textWidth) / 2);
+	    int textY = (int) (y + (diameter - textHeight) / 2 + fm.getAscent());
+
+	    g2.drawString(label, textX, textY);
 	}
+
 }
