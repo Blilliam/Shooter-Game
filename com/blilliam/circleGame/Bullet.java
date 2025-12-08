@@ -9,6 +9,7 @@ public class Bullet extends Entity {
     GameObject gameObj;
     int angle = 270;
     static int dmg = 1;
+    static int speed = 15;
 
     public Bullet(GameObject gameObj, double x, double y) {
         this.gameObj = gameObj;
@@ -23,7 +24,6 @@ public class Bullet extends Entity {
     }
     
     public void update() {
-        int speed = 15;
         double radianAngle = (angle * Math.PI) / 180;
         dx = Math.cos(radianAngle) * speed;
         dy = Math.sin(radianAngle) * speed;

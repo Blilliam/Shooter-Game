@@ -75,6 +75,8 @@ public class GameObject {
 		String s5 = "Speed: " + this.player1.speed;
 		String s6 = "Atack Delay: " + this.player1.delay;
 		String s7 = "Health: " + this.player1.health;
+		String s8 = "Bullet Speed: " + Bullet.speed;
+		String s9 = "Bullet Teir: " + player1.bulletTeir;
 
 		int x1 = (AppPanel.WIDTH - fm.stringWidth(s1)) / 2;
 		int x2 = (AppPanel.WIDTH - fm.stringWidth(s2)) / 2;
@@ -88,5 +90,7 @@ public class GameObject {
 		g2.drawString(s5, 0, 60);
 		g2.drawString(s6, 0, 90);
 		g2.drawString(s7, 0, 120);
+		g2.drawString(s8, 0, 150);
+		g2.drawString(s9, 0, 180);
 	}
 }

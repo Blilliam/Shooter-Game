@@ -12,13 +12,13 @@ public class Upgrade {
 	public boolean isUpgrading = false;
 
 	UpgradeBox[] boxes;
-	final int numberOfBoxes = 5;
+	final int numberOfBoxes = 6;
 
 	final int rectWidth = 300;
 	final int rectHeight = 450;
 
 	// customize these however you want
-	int[] costs = { 5, 5, 5, 5, 5 };
+	int[] costs = { 5, 5, 5, 5, 5, 5 };
 
 	public Upgrade(GameObject gameObj) {
 		this.gameObj = gameObj;

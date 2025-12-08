@@ -4,10 +4,8 @@ import java.awt.Rectangle;
 
 public class UpgradeBox extends Rectangle {
 
-	private static final long serialVersionUID = 1L;
-
 	public int cost = 5; // base cost for all upgrades
-	private final int type;
+	public int type;
 	private final GameObject gameObj;
 
 	public UpgradeBox(GameObject gameObj, int type) {
@@ -17,18 +15,25 @@ public class UpgradeBox extends Rectangle {
 
 	// Apply upgrade + increase cost
 	public void upgrade() {
-
 		switch (type) {
 		case 1:
 			Bullet.dmg++;
+			break;
 		case 2:
 			gameObj.player1.speed *= 1.2;
+			break;
 		case 3:
 			gameObj.player1.bulletTeir++;
+			break;
 		case 4:
 			gameObj.player1.delay *= 0.85;
+			break;
 		case 5:
 			gameObj.player1.health += 3;
+			break;
+		case 6:
+			Bullet.speed *= 1.3;
+			break;
 		}
 
 		// Increase this upgrade's cost by ×1.5
@@ -47,6 +52,8 @@ public class UpgradeBox extends Rectangle {
 			return "Attack Speed\n15% faster fire";
 		case 5:
 			return "Player Health\n+3 HP";
+		case 6:
+			return "Bullet Speed\n+30% bullet speed";
 		default:
 			return "";
 		}
