@@ -14,7 +14,7 @@ public class WaveSystem {
 	public void update() {
 		if (gameObj.enemies.size() == 0 && gameObj.upgrades.isUpgrading == false) {
 			waveNum++;
-			if (waveNum == 2) {
+			if (waveNum != 1) {
 				gameObj.upgrades.isUpgrading = true;
 			}
 			createEnemies();

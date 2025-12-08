@@ -8,6 +8,7 @@ import java.util.List;
 public class Bullet extends Entity {
     GameObject gameObj;
     int angle = 270;
+    static int dmg = 1;
 
     public Bullet(GameObject gameObj, double x, double y) {
         this.gameObj = gameObj;
@@ -36,7 +37,7 @@ public class Bullet extends Entity {
         
         for (Enemy e : gameObj.enemies) {
             if (Entity.circleCollision(this, e)) {
-                e.setHealth(e.getHealth() - 1);
+                e.setHealth(e.getHealth() - dmg);
                 e.flash();
 
                 if (e.getTeir() != 1 && e.getHealth() == 0) {

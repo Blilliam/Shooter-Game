@@ -6,14 +6,16 @@ import java.awt.Graphics2D;
 
 public class Player extends Entity {
 	public int totalCoins;
-	public int playerTeir = 1;
 	public int score = 0;
-	public int health = 5;
-	public int speed = 10;
 	public boolean isHit = false;
 	private long timer = 0;
-	private long delay = 400;
 	GameObject gameObj;
+	
+	public int bulletTeir = 1;
+
+	public double health = 5;
+	public double speed = 5;
+	public double delay = 400;
 
 	private long hitTimer = 0;
 	private long hitDelay = 1000;
@@ -33,19 +35,19 @@ public class Player extends Entity {
 				e.isDead = true;
 			}
 		}
-		if (score >= 1000) {
-			delay = 50;
-			playerTeir = 5;
-		} else if (score >= 300) {
-			delay = 100;
-			playerTeir = 4;
-		} else if (score >= 100) {
-			delay = 200;
-			playerTeir = 3;
-		} else if (score >= 25) {
-			delay = 300;
-			playerTeir = 2;
-		}
+//		if (score >= 1000) {
+//			delay = 50;
+//			playerTeir = 5;
+//		} else if (score >= 300) {
+//			delay = 100;
+//			playerTeir = 4;
+//		} else if (score >= 100) {
+//			delay = 200;
+//			playerTeir = 3;
+//		} else if (score >= 25) {
+//			delay = 300;
+//			playerTeir = 2;
+//		}
 
 		if (health == 0) {
 			isDead = true;
@@ -57,19 +59,19 @@ public class Player extends Entity {
 
 	public void createBullets() {
 		if (gameObj.keyH.shooting) {
-			if (playerTeir == 1) {
+			if (bulletTeir == 1) {
 				teirBullet1();
 			}
-			if (playerTeir == 2) {
+			if (bulletTeir == 2) {
 				teirBullet2();
 			}
-			if (playerTeir == 3) {
+			if (bulletTeir == 3) {
 				teirBullet3();
 			}
-			if (playerTeir == 4) {
+			if (bulletTeir == 4) {
 				teirBullet4();
 			}
-			if (playerTeir == 5) {
+			if (bulletTeir == 5) {
 				teirBullet5();
 			}
 		}
@@ -188,6 +190,6 @@ public class Player extends Entity {
 			g2.setColor(overlayWhite);
 			g2.fillOval((int) getX(), (int) getY(), this.radius * 2, this.radius * 2);
 		}
-		
+
 	}
 }
