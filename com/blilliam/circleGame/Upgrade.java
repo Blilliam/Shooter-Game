@@ -109,7 +109,7 @@ public class Upgrade {
 
 		if (mx >= exitX && mx <= exitX + exitW && my >= exitY && my <= exitY + exitH) {
 
-			gameObj.state = GameState.UPGRADING;
+			gameObj.state = GameState.PLAY;
 			return;
 		}
 

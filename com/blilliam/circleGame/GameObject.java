@@ -14,8 +14,9 @@ public class GameObject {
 	WaveSystem waves = new WaveSystem(this);
 	Upgrade upgrades = new Upgrade(this);
 	KeyboardInput keyH;
+
 	
-	public static GameState state = GameState.START;
+	public static GameState state = GameState.PLAY;
 	
 	public GameObject(KeyboardInput keyHandler) {
 		this.keyH = keyHandler;
@@ -59,10 +60,72 @@ public class GameObject {
 			for (int i = 0; i< coins.size(); i ++) {
 				coins.get(i).draw(g2);
 			}
-		} else {
+			
+			
+			g2.setColor(Color.WHITE);
+			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
+			
+			FontMetrics fm = g2.getFontMetrics();
+
+			String s1 = "Score: " + this.player1.score;
+			String s2 = "Wave Number: " + WaveSystem.waveNum;
+			String s3 = "Coins: " + this.player1.totalCoins;
+			
+			String s4 = "Damage: " + Bullet.dmg;
+			String s5 = "Speed: " + this.player1.speed;
+			String s6 = "Atack Delay: " + this.player1.delay;
+			String s7 = "Health: " + this.player1.health;
+			String s8 = "Bullet Speed: " + Bullet.speed;
+			String s9 = "Bullet Teir: " + player1.bulletTeir;
+
+			int x1 = (AppPanel.WIDTH - fm.stringWidth(s1)) / 2;
+			int x2 = (AppPanel.WIDTH - fm.stringWidth(s2)) / 2;
+			int x3 = (AppPanel.WIDTH - fm.stringWidth(s3)) / 2;
+
+			g2.drawString(s1, x1, 30);
+			g2.drawString(s2, x2, 60);
+			g2.drawString(s3, x3, 90);
+			
+			g2.drawString(s4, 0, 30);
+			g2.drawString(s5, 0, 60);
+			g2.drawString(s6, 0, 90);
+			g2.drawString(s7, 0, 120);
+			g2.drawString(s8, 0, 150);
+			g2.drawString(s9, 0, 180);
+		} else if (state == GameState.UPGRADING){
 			g2.setColor(new Color(0, 0, 255, 100));
 			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
 			upgrades.draw(g2);
+			g2.setColor(Color.WHITE);
+			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
+			
+			FontMetrics fm = g2.getFontMetrics();
+
+			String s1 = "Score: " + this.player1.score;
+			String s2 = "Wave Number: " + WaveSystem.waveNum;
+			String s3 = "Coins: " + this.player1.totalCoins;
+			
+			String s4 = "Damage: " + Bullet.dmg;
+			String s5 = "Speed: " + this.player1.speed;
+			String s6 = "Atack Delay: " + this.player1.delay;
+			String s7 = "Health: " + this.player1.health;
+			String s8 = "Bullet Speed: " + Bullet.speed;
+			String s9 = "Bullet Teir: " + player1.bulletTeir;
+
+			int x1 = (AppPanel.WIDTH - fm.stringWidth(s1)) / 2;
+			int x2 = (AppPanel.WIDTH - fm.stringWidth(s2)) / 2;
+			int x3 = (AppPanel.WIDTH - fm.stringWidth(s3)) / 2;
+
+			g2.drawString(s1, x1, 30);
+			g2.drawString(s2, x2, 60);
+			g2.drawString(s3, x3, 90);
+			
+			g2.drawString(s4, 0, 30);
+			g2.drawString(s5, 0, 60);
+			g2.drawString(s6, 0, 90);
+			g2.drawString(s7, 0, 120);
+			g2.drawString(s8, 0, 150);
+			g2.drawString(s9, 0, 180);
 		}
 		
 		
@@ -73,35 +136,6 @@ public class GameObject {
 			int xDead = (AppPanel.WIDTH - fmDeath.stringWidth("GAME OVER")) / 2;
 			g2.drawString("GAME OVER", xDead, (int) (AppPanel.HEIGHT / 2));
 		}
-		g2.setColor(Color.WHITE);
-		g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
 		
-		FontMetrics fm = g2.getFontMetrics();
-
-		String s1 = "Score: " + this.player1.score;
-		String s2 = "Wave Number: " + WaveSystem.waveNum;
-		String s3 = "Coins: " + this.player1.totalCoins;
-		
-		String s4 = "Damage: " + Bullet.dmg;
-		String s5 = "Speed: " + this.player1.speed;
-		String s6 = "Atack Delay: " + this.player1.delay;
-		String s7 = "Health: " + this.player1.health;
-		String s8 = "Bullet Speed: " + Bullet.speed;
-		String s9 = "Bullet Teir: " + player1.bulletTeir;
-
-		int x1 = (AppPanel.WIDTH - fm.stringWidth(s1)) / 2;
-		int x2 = (AppPanel.WIDTH - fm.stringWidth(s2)) / 2;
-		int x3 = (AppPanel.WIDTH - fm.stringWidth(s3)) / 2;
-
-		g2.drawString(s1, x1, 30);
-		g2.drawString(s2, x2, 60);
-		g2.drawString(s3, x3, 90);
-		
-		g2.drawString(s4, 0, 30);
-		g2.drawString(s5, 0, 60);
-		g2.drawString(s6, 0, 90);
-		g2.drawString(s7, 0, 120);
-		g2.drawString(s8, 0, 150);
-		g2.drawString(s9, 0, 180);
 	}
 }
