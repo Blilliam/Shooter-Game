@@ -10,18 +10,17 @@ import java.util.Random;
 public class Upgrade {
 
 	GameObject gameObj;
-	public boolean isUpgrading = false;
 
 	UpgradeBox[] totalBoxes;
 	UpgradeBox[] currBoxes;
-	final int numberOfTotalBoxes = 4;
+	final int numberOfTotalBoxes = 7;
 	final int numberOfCurrBoxes = 3;
 
 	final int rectWidth = 300;
 	final int rectHeight = 450;
 
 	// customize these however you want
-	int[] costs = { 5, 5, 5, 5, 5, 5 };
+	int[] costs = { 5, 5, 5, 5, 5, 5, 5 };
 
 	public Upgrade(GameObject gameObj) {
 		this.gameObj = gameObj;
@@ -110,7 +109,7 @@ public class Upgrade {
 
 		if (mx >= exitX && mx <= exitX + exitW && my >= exitY && my <= exitY + exitH) {
 
-			isUpgrading = false;
+			gameObj.state = GameState.UPGRADING;
 			return;
 		}
 

@@ -29,6 +29,9 @@ public class Player extends Entity {
 	}
 
 	public void update() {
+		if (isDead) {
+			return;
+		}
 		for (Coin e : gameObj.coins) {
 			if (Entity.circleCollision(this, e)) {
 				totalCoins += e.value;
@@ -154,6 +157,9 @@ public class Player extends Entity {
 	}
 
 	public void draw(Graphics2D g2) {
+		if (isDead) {
+			return;
+		}
 		Color playerColor;
 
 		if (isHit) {

@@ -15,12 +15,14 @@ public class GameObject {
 	Upgrade upgrades = new Upgrade(this);
 	KeyboardInput keyH;
 	
+	public static GameState state = GameState.START;
+	
 	public GameObject(KeyboardInput keyHandler) {
 		this.keyH = keyHandler;
 	}
 
 	public void update() {
-		if (!upgrades.isUpgrading) {
+		if (state == GameState.PLAY) {
 			waves.update();
 			
 			enemies.removeIf((e) -> e.isDead);
@@ -41,7 +43,7 @@ public class GameObject {
 		}
 	}
 	public void draw(Graphics2D g2) {
-		if (!upgrades.isUpgrading) {
+		if (state == GameState.PLAY) {
 			g2.setColor(new Color(0, 0, 0));
 			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
 			player1.draw(g2);
@@ -63,8 +65,17 @@ public class GameObject {
 			upgrades.draw(g2);
 		}
 		
+		
+		if (player1.isDead) {
+			g2.setColor(Color.RED);
+			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 100));
+			FontMetrics fmDeath = g2.getFontMetrics();
+			int xDead = (AppPanel.WIDTH - fmDeath.stringWidth("GAME OVER")) / 2;
+			g2.drawString("GAME OVER", xDead, (int) (AppPanel.HEIGHT / 2));
+		}
 		g2.setColor(Color.WHITE);
 		g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
+		
 		FontMetrics fm = g2.getFontMetrics();
 
 		String s1 = "Score: " + this.player1.score;
