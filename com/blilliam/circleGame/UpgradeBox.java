@@ -20,7 +20,7 @@ public class UpgradeBox extends Rectangle {
 			Bullet.dmg++;
 			break;
 		case 2:
-			gameObj.player1.speed *= 1.2;
+			gameObj.player1.speed *= 1.1;
 			break;
 		case 3:
 			gameObj.player1.bulletTeir++;
@@ -32,7 +32,10 @@ public class UpgradeBox extends Rectangle {
 			gameObj.player1.health += 3;
 			break;
 		case 6:
-			Bullet.speed *= 1.3;
+			Bullet.speed *= 1.2;
+			break;
+		case 7:
+			Coin.valueMult *= 1.5;
 			break;
 		}
 
@@ -45,7 +48,7 @@ public class UpgradeBox extends Rectangle {
 		case 1:
 			return "Bullet Damage\n+1 damage";
 		case 2:
-			return "Player Speed\n+50% movement";
+			return "Player Speed\n+10% movement";
 		case 3:
 			return "Bullet Amount\n+1 bullet";
 		case 4:
@@ -53,9 +56,11 @@ public class UpgradeBox extends Rectangle {
 		case 5:
 			return "Player Health\n+3 HP";
 		case 6:
-			return "Bullet Speed\n+30% bullet speed";
+			return "Bullet Speed\n+20% bullet speed";
+		case 7:
+			return "Coin value\n+50% coins gained";
 		default:
-			return "";
+			return "non existant box";
 		}
 	}
 }

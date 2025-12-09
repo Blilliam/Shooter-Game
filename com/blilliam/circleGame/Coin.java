@@ -8,10 +8,13 @@ import java.awt.Graphics2D;
 public class Coin extends Entity{
 	GameObject gameObj;
 	public int value;
+	public static double valueMult = 1;
 	
 	public Coin(GameObject gameObj, int value, double x, double y) {
 		this.gameObj = gameObj;
 		this.value = value;
+		value = (int) Math.ceil(value * valueMult);
+		
 		
 		radius = 10 + (value * 2);
 		

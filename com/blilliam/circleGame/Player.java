@@ -35,19 +35,6 @@ public class Player extends Entity {
 				e.isDead = true;
 			}
 		}
-//		if (score >= 1000) {
-//			delay = 50;
-//			playerTeir = 5;
-//		} else if (score >= 300) {
-//			delay = 100;
-//			playerTeir = 4;
-//		} else if (score >= 100) {
-//			delay = 200;
-//			playerTeir = 3;
-//		} else if (score >= 25) {
-//			delay = 300;
-//			playerTeir = 2;
-//		}
 
 		if (health == 0) {
 			isDead = true;

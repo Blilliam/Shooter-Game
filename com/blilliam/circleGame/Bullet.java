@@ -44,7 +44,7 @@ public class Bullet extends Entity {
                 	toAddEnemies.add(new Enemy(gameObj, e.getTeir() - 1, e.getX(), e.getY()));
                 	toAddEnemies.add(new Enemy(gameObj, e.getTeir() - 1, e.getX(), e.getY()));
                 }
-                if (Math.random()>0.5) {
+                if (Math.random()>0.5 && e.getHealth() == 0) {
                 	toAddCoins.add(new Coin(gameObj, e.getTeir(), e.getX(), e.getY()));
                 }
 

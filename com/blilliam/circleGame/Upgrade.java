@@ -5,14 +5,17 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.util.Random;
 
 public class Upgrade {
 
 	GameObject gameObj;
 	public boolean isUpgrading = false;
 
-	UpgradeBox[] boxes;
-	final int numberOfBoxes = 6;
+	UpgradeBox[] totalBoxes;
+	UpgradeBox[] currBoxes;
+	final int numberOfTotalBoxes = 4;
+	final int numberOfCurrBoxes = 3;
 
 	final int rectWidth = 300;
 	final int rectHeight = 450;
@@ -22,12 +25,15 @@ public class Upgrade {
 
 	public Upgrade(GameObject gameObj) {
 		this.gameObj = gameObj;
-		boxes = new UpgradeBox[numberOfBoxes];
+		totalBoxes = new UpgradeBox[numberOfTotalBoxes];
 
-		for (int i = 0; i < numberOfBoxes; i++) {
-			boxes[i] = new UpgradeBox(gameObj, i + 1);
-			boxes[i].cost = 5; // base cost
+		for (int i = 0; i < numberOfTotalBoxes; i++) {
+			totalBoxes[i] = new UpgradeBox(gameObj, i + 1);
+			totalBoxes[i].cost = costs[i]; // base cost
 		}
+		//generate the random boxes
+		randomCurrBox();
+
 	}
 
 	public void draw(Graphics2D g2) {
@@ -35,7 +41,7 @@ public class Upgrade {
 		g2.setFont(new Font("Arial", Font.BOLD, 24));
 		FontMetrics fm = g2.getFontMetrics();
 
-		int spacing = (AppPanel.WIDTH - rectWidth * numberOfBoxes) / (numberOfBoxes + 1);
+		int spacing = (AppPanel.WIDTH - rectWidth * numberOfCurrBoxes) / (numberOfCurrBoxes + 1);
 		int y = (AppPanel.HEIGHT - rectHeight) / 2;
 
 		// ===== EXIT BUTTON =====
@@ -58,11 +64,11 @@ public class Upgrade {
 		g2.drawString(exit, exitTextX, exitTextY);
 
 		// ===== UPGRADE BOXES =====
-		for (int i = 0; i < numberOfBoxes; i++) {
+		for (int i = 0; i < numberOfCurrBoxes; i++) {
 
 			int x = spacing + i * (rectWidth + spacing);
 
-			boxes[i].setBounds(x, y, rectWidth, rectHeight);
+			currBoxes[i].setBounds(x, y, rectWidth, rectHeight);
 
 			// fill
 			g2.setColor(Color.BLACK);
@@ -74,7 +80,7 @@ public class Upgrade {
 			g2.drawRect(x, y, rectWidth, rectHeight);
 
 			// multiline text
-			String[] lines = boxes[i].description().split("\n");
+			String[] lines = currBoxes[i].description().split("\n");
 			g2.setColor(Color.WHITE);
 
 			int totalH = lines.length * fm.getHeight();
@@ -87,7 +93,7 @@ public class Upgrade {
 			}
 
 			// cost text
-			String costLabel = "Cost: " + boxes[i].cost;
+			String costLabel = "Cost: " + currBoxes[i].cost;
 			int costX = x + (rectWidth - fm.stringWidth(costLabel)) / 2;
 			int costY = y + rectHeight - fm.getDescent() - 12;
 			g2.drawString(costLabel, costX, costY);
@@ -109,14 +115,33 @@ public class Upgrade {
 		}
 
 		// Upgrade boxes
-		for (int i = 0; i < numberOfBoxes; i++) {
-			if (boxes[i] != null && boxes[i].contains(mx, my)) {
-				if (gameObj.player1.totalCoins >= boxes[i].cost) {
-					gameObj.player1.totalCoins -= boxes[i].cost;
-					boxes[i].upgrade();
+		for (int i = 0; i < numberOfCurrBoxes; i++) {
+			if (currBoxes[i] != null && currBoxes[i].contains(mx, my)) {
+				if (gameObj.player1.totalCoins >= currBoxes[i].cost) {
+					gameObj.player1.totalCoins -= currBoxes[i].cost;
+					currBoxes[i].upgrade();
+					randomCurrBox();
 				}
 				return;
 			}
+		}
+	}
+	public void randomCurrBox() {
+		currBoxes = new UpgradeBox[numberOfCurrBoxes];
+		Random rand = new Random();
+		boolean[] used = new boolean[numberOfTotalBoxes];
+
+		int count = 0;
+		while (count < 3) {
+		    int r = rand.nextInt(6);
+		    if (!used[r]) {
+		    	if (totalBoxes[r].type == 3 && gameObj.player1.bulletTeir == 5) {
+		    		continue;
+		    	}
+		        used[r] = true;
+		        currBoxes[count] = totalBoxes[r];
+		        count++;
+		    }
 		}
 	}
 }
