@@ -14,12 +14,20 @@ public class GameObject {
 	WaveSystem waves = new WaveSystem(this);
 	Upgrade upgrades = new Upgrade(this);
 	KeyboardInput keyH;
+	MouseInput mouseHandler;
+	int startButtonWidth = 300;
+	int startButtonHight = 100;
+	GameButton startButton = new GameButton(this, "START", AppPanel.WIDTH/2 - startButtonWidth / 2, AppPanel.HEIGHT/2 - startButtonHight/2, 300, 100, this::startGame);
 
 	
-	public static GameState state = GameState.PLAY;
+	public static GameState state = GameState.START;
 	
-	public GameObject(KeyboardInput keyHandler) {
-		this.keyH = keyHandler;
+	public GameObject(KeyboardInput keyH, MouseInput mouseHandler) {
+		this.keyH = keyH;
+		this.mouseHandler = mouseHandler;
+	}
+	private void startGame() {
+		state = GameState.PLAY;
 	}
 
 	public void update() {
@@ -41,6 +49,8 @@ public class GameObject {
 			bullets.forEach(b -> {
 				b.update();
 			});
+		} else if (state == GameState.START) {
+			startButton.update();
 		}
 	}
 	public void draw(Graphics2D g2) {
@@ -96,6 +106,7 @@ public class GameObject {
 			g2.setColor(new Color(0, 0, 255, 100));
 			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
 			upgrades.draw(g2);
+			
 			g2.setColor(Color.WHITE);
 			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
 			
@@ -126,6 +137,8 @@ public class GameObject {
 			g2.drawString(s7, 0, 120);
 			g2.drawString(s8, 0, 150);
 			g2.drawString(s9, 0, 180);
+		} else if (state == GameState.START) {
+			startButton.draw(g2);
 		}
 		
 		

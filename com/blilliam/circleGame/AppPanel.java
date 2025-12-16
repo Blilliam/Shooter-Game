@@ -16,16 +16,16 @@ public class AppPanel extends JPanel implements Runnable {
 	public Dimension d = new Dimension(WIDTH, HEIGHT);
 	public Thread t = new Thread(this);
 	KeyboardInput keyHandler = new KeyboardInput();
-	GameObject gameObj = new GameObject(keyHandler);
-	MouseInput mouseHandler;
+	MouseInput mouseHandler = new MouseInput();
+	GameObject gameObj = new GameObject(keyHandler, mouseHandler);
 	
 	// Constructor
 	public AppPanel() {
 		setPreferredSize(d);
 		addKeyListener(keyHandler);
 		setFocusable(true);
-		mouseHandler = new MouseInput(gameObj);
         addMouseListener(mouseHandler);
+        addMouseMotionListener(mouseHandler);
 		t.start();
 	}
 	
