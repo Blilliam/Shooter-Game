@@ -5,26 +5,34 @@ import java.awt.event.MouseEvent;
 
 public class MouseInput extends MouseAdapter {
 
-    public boolean isLeft = false;
-    public int x = 0;
-    public int y = 0;
-
-    public MouseInput() {
-    }
+    public static int mouseX, mouseY;
+    public static boolean mousePressed = false;
+    public static boolean mouseClicked = false;
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        x = e.getX();
-        y = e.getY();
-        
-//        gameObj.upgrades.mouseClick(x, y); FIX THIS
-        isLeft = true;
+    public void mousePressed(MouseEvent e) {
+        mousePressed = true;
     }
+
     @Override
     public void mouseReleased(MouseEvent e) {
-    	if (e.getButton() == MouseEvent.BUTTON1) {
-    		isLeft = false;
-    	}
+        mousePressed = false;
+        mouseClicked = true; // single-frame click
     }
 
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        mouseX = e.getX();
+        mouseY = e.getY();
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mouseMoved(e);
+    }
+
+    /** Call once per frame at the end of your game loop */
+    public static void update() {
+        mouseClicked = false;
+    }
 }

@@ -10,6 +10,7 @@ public class Bullet extends Entity {
     int angle = 270;
     static int dmg = 1;
     static int speed = 15;
+    public static double dropRate = 0.5;
 
     public Bullet(GameObject gameObj, double x, double y) {
         this.gameObj = gameObj;
@@ -44,7 +45,7 @@ public class Bullet extends Entity {
                 	toAddEnemies.add(new Enemy(gameObj, e.getTeir() - 1, e.getX(), e.getY()));
                 	toAddEnemies.add(new Enemy(gameObj, e.getTeir() - 1, e.getX(), e.getY()));
                 }
-                if (Math.random()>0.5 && e.getHealth() == 0) {
+                if (Math.random()>dropRate && e.getHealth() == 0) {
                 	toAddCoins.add(new Coin(gameObj, e.getTeir(), e.getX(), e.getY()));
                 }
 

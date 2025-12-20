@@ -50,7 +50,7 @@ public class Player extends Entity {
 	public void createBullets() {
 		if (gameObj.keyH.shooting) {
 			if (bulletTeir == 1) {
-				teirBullet1();
+				teirBullet3();
 			}
 			if (bulletTeir == 2) {
 				teirBullet2();
