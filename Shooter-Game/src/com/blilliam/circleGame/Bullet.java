@@ -10,7 +10,7 @@ public class Bullet extends Entity {
     int angle = 270;
     static int dmg = 1;
     static int speed = 15;
-    public static double dropRate = 0.5;
+    public static double dropRate = 1;
 
     public Bullet(GameObject gameObj, double x, double y) {
         this.gameObj = gameObj;
@@ -40,19 +40,26 @@ public class Bullet extends Entity {
             if (Entity.circleCollision(this, e)) {
                 e.setHealth(e.getHealth() - dmg);
                 e.flash();
-
-                if (e.getTeir() != 1 && e.getHealth() == 0) {
-                	toAddEnemies.add(new Enemy(gameObj, e.getTeir() - 1, e.getX(), e.getY()));
-                	toAddEnemies.add(new Enemy(gameObj, e.getTeir() - 1, e.getX(), e.getY()));
+                
+                if (e.getHealth() == 0) {
+	                if (e.getTeir() != 1) {
+	                	toAddEnemies.add(new Enemy(gameObj, e.getTeir() - 1, e.getX(), e.getY()));
+	                	toAddEnemies.add(new Enemy(gameObj, e.getTeir() - 1, e.getX(), e.getY()));
+	                }
+	                
+	                for (int i = 0; i < (int) dropRate; i++) {
+	                	toAddCoins.add(new Coin(gameObj, e.getTeir(), e.getX() + (i * 5), e.getY() + (i * 5)));
+	                }
+	                
+	                if (dropRate % 1 > Math.random()) {
+	                	toAddCoins.add(new Coin(gameObj, e.getTeir(), e.getX(), e.getY()));
+	                }
+	                
+	                isDead = true;
                 }
-                if (Math.random()>dropRate && e.getHealth() == 0) {
-                	toAddCoins.add(new Coin(gameObj, e.getTeir(), e.getX(), e.getY()));
-                }
-
-                isDead = true;
             }
         }
-
+        
         // Add new enemies AFTER loop
         gameObj.enemies.addAll(toAddEnemies);
         gameObj.coins.addAll(toAddCoins);
