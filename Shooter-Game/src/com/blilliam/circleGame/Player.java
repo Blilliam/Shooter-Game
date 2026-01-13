@@ -5,7 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class Player extends Entity {
-	public int totalCoins;
+	public int totalCoins = 10000;
 	public int score = 0;
 	public boolean isHit = false;
 	private long timer = 0;

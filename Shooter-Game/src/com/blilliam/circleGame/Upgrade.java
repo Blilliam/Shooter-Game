@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Upgrade {
@@ -12,9 +13,9 @@ public class Upgrade {
 	GameObject gameObj;
 
 	UpgradeBox[] totalBoxes;
-	UpgradeBox[] currBoxes;
+	int[] currBoxIndex = new int[3];
 	final int numberOfTotalBoxes = 8;
-	final int numberOfCurrBoxes = 3;
+	final int numberOfcurrBoxes = 3;
 
 	final int rectWidth = 300;
 	final int rectHeight = 450;
@@ -46,7 +47,7 @@ public class Upgrade {
 		g2.setColor(new Color(20, 20, 50, 200));
 		g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
 
-		int spacing = (AppPanel.WIDTH - rectWidth * numberOfCurrBoxes) / (numberOfCurrBoxes + 1);
+		int spacing = (AppPanel.WIDTH - rectWidth * numberOfcurrBoxes) / (numberOfcurrBoxes + 1);
 		int y = (AppPanel.HEIGHT - rectHeight) / 2;
 
 		// ===== EXIT BUTTON =====
@@ -86,8 +87,8 @@ public class Upgrade {
 		g2.drawString(reRoll, reRollTextX, reRollTextY);
 
 		// ===== UPGRADE BOXES =====
-		for (int i = 0; i < numberOfCurrBoxes; i++) {
-			UpgradeBox box = currBoxes[i];
+		for (int i = 0; i < numberOfcurrBoxes; i++) {
+			UpgradeBox box = totalBoxes[currBoxIndex[i]];
 			int x = spacing + i * (rectWidth + spacing);
 
 			box.x = x;
@@ -139,11 +140,11 @@ public class Upgrade {
 			}
 
 			// UPGRADE BOXES
-			for (UpgradeBox box : currBoxes) {
-				if (box != null && box.isHovering()) {
-					if (gameObj.player1.totalCoins >= box.cost) {
-						gameObj.player1.totalCoins -= box.cost;
-						box.upgrade();
+			for (int i = 0; i < numberOfcurrBoxes; i++) {
+				if (totalBoxes[currBoxIndex[i]] != null && totalBoxes[currBoxIndex[i]].isHovering()) {
+					if (gameObj.player1.totalCoins >= totalBoxes[currBoxIndex[i]].cost) {
+						gameObj.player1.totalCoins -= totalBoxes[currBoxIndex[i]].cost;
+						totalBoxes[currBoxIndex[i]].upgrade();
 						randomCurrBox();
 					}
 					MouseInput.update();
@@ -152,39 +153,34 @@ public class Upgrade {
 			}
 		}
 
-		// Update animations
-		for (UpgradeBox box : currBoxes) {
-			box.updateAnimation();
-		}
-	}
+	// Update animations
+	for(int i = 0; i < numberOfcurrBoxes; i++) {
+		totalBoxes[currBoxIndex[i]].updateAnimation();
+	}}
 
 	// =========================
 	// RANDOMIZE BOXES (FIXED)
 	// =========================
 	public void randomCurrBox() {
-		currBoxes = new UpgradeBox[numberOfCurrBoxes];
 		Random rand = new Random();
-		boolean[] used = new boolean[numberOfTotalBoxes];
 
 		int count = 0;
-		while (count < numberOfCurrBoxes) {
+		while (count < numberOfcurrBoxes) {
 			int r = rand.nextInt(numberOfTotalBoxes);
 
-			if (!used[r]) {
-				if (totalBoxes[r].type == 3 && gameObj.player1.bulletTeir == 5)
-					continue;
+			// if (totalBoxes[r].type == 3 && gameObj.player1.bulletTeir == 5)
+			// continue;
+			
+			if (Arrays.asList(currBoxIndex).contains(r)) {
+				continue;
+			} 
+			
+			currBoxIndex[count] = r;
+			
+			// currBoxes[count] = copy;
+			totalBoxes[currBoxIndex[r]].startAnimation();
+			count++;
 
-				used[r] = true;
-
-				// CREATE NEW INSTANCE (FIX)
-				UpgradeBox original = totalBoxes[r];
-				UpgradeBox copy = new UpgradeBox(gameObj, original.type, 0, 0);
-				copy.cost = original.cost;
-
-				currBoxes[count] = copy;
-				currBoxes[count].startAnimation();
-				count++;
-			}
 		}
 	}
 }

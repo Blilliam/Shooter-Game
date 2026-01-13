@@ -86,10 +86,8 @@ public class UpgradeBox {
             case 7 -> Coin.valueMult *= 1.5;
             case 8 -> Bullet.dropRate *= 0.8;
         }
-        //cost = (int)Math.ceil(cost * 1.2);
-        cost*= 5;
-        System.out.println("Cost increases ");
-        System.out.println("cost");
+        cost = (int)Math.ceil(cost * 1.2);
+       
     }
 
     public String description() {
