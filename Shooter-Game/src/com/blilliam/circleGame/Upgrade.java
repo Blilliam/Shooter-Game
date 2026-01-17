@@ -162,25 +162,22 @@ public class Upgrade {
 	// RANDOMIZE BOXES (FIXED)
 	// =========================
 	public void randomCurrBox() {
-		Random rand = new Random();
+	    Random rand = new Random();
 
-		int count = 0;
-		while (count < numberOfcurrBoxes) {
-			int r = rand.nextInt(numberOfTotalBoxes);
+	    int count = 0;
+	    while (count < numberOfcurrBoxes) {
+	        int r = rand.nextInt(numberOfTotalBoxes);
 
-			// if (totalBoxes[r].type == 3 && gameObj.player1.bulletTeir == 5)
-			// continue;
-			
-			if (Arrays.asList(currBoxIndex).contains(r)) {
-				continue;
-			} 
-			
-			currBoxIndex[count] = r;
-			
-			// currBoxes[count] = copy;
-			totalBoxes[currBoxIndex[r]].startAnimation();
-			count++;
+	        if (Arrays.asList(currBoxIndex).contains(r)) {
+	            continue;
+	        } 
 
-		}
+	        currBoxIndex[count] = r;
+
+	        // Start animation for the selected box
+	        totalBoxes[currBoxIndex[count]].startAnimation();
+
+	        count++;
+	    }
 	}
 }
