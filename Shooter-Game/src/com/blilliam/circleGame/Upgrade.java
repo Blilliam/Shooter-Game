@@ -160,7 +160,7 @@ public class Upgrade {
 
 	// =========================
 	// RANDOMIZE BOXES (FIXED)
-	// =========================
+	// ========================= 
 	public void randomCurrBox() {
 	    Random rand = new Random();
 
