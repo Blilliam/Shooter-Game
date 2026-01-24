@@ -57,6 +57,7 @@ public class Bullet extends Entity {
 	                
 	                isDead = true;
                 }
+                break;
             }
         }
         

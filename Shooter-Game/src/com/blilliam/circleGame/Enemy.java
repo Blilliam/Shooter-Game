@@ -1,5 +1,6 @@
 package com.blilliam.circleGame;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -12,6 +13,12 @@ public class Enemy extends Entity {
 	private int health;
 
 	private int flashTimer = 0;
+	
+	int deathTimer = -1;
+	
+	int shockwaveRadius = 0;
+	int shockwaveMax = 80;
+	boolean shockwaveActive = false;
 
 	public int getTeir() {
 		return teir;
@@ -76,8 +83,15 @@ public class Enemy extends Entity {
 	}
 
 	public void flash() {
-		flashTimer = 5;
+	    flashTimer = 5;
+	    shockwaveActive = true;
+	    shockwaveRadius = 0;
+
+	    if (health <= 0) {
+	        deathTimer = 10; // frames to show shockwave
+	    }
 	}
+
 
 	public void update() {
 		setX(getX() + dx);
@@ -85,6 +99,14 @@ public class Enemy extends Entity {
 
 		if (flashTimer > 0)
 			flashTimer--;
+		
+		if (shockwaveActive) {
+		    shockwaveRadius += 4;  // speed of expansion
+
+		    if (shockwaveRadius > shockwaveMax) {
+		        shockwaveActive = false;
+		    }
+		}
 
 		// bounce
 		if (getY() > AppPanel.HEIGHT - (radius * 2)) {
@@ -105,12 +127,38 @@ public class Enemy extends Entity {
 		}
 
 		if (health <= 0) {
-			isDead = true;
-			gameObj.player1.score += teir;
+		    dx = 0;
+		    dy = 0;
+
+		    if (deathTimer > 0) {
+		        deathTimer--;
+		    } else if (deathTimer == 0) {
+		        isDead = true;
+		        gameObj.player1.score += teir;
+		    }
 		}
+
 	}
 
 	public void draw(Graphics2D g2) {
+		
+		if (shockwaveActive) {
+		    int alpha = 120 - (shockwaveRadius * 120 / shockwaveMax);
+		    alpha = Math.max(alpha, 0);
+
+		    g2.setStroke(new BasicStroke(4)); // thickness of ring
+		    g2.setColor(new Color(255, 255, 255, alpha));
+
+		    int size = shockwaveRadius * 2;
+		    int offset = shockwaveRadius;
+
+		    g2.drawOval(
+		        (int) getX() + radius - offset,
+		        (int) getY() + radius - offset,
+		        size,
+		        size
+		    );
+		}
 
 		if (flashTimer > 0) {
 			g2.setColor(Color.WHITE);
