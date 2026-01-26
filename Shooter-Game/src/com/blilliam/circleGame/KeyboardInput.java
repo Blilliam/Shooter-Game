@@ -12,6 +12,8 @@ public class KeyboardInput implements KeyListener {
 	
 	public boolean shooting = false;
 	
+	public boolean boosting = false;
+	
 	@Override
 	public void keyTyped(KeyEvent e) {
 		
@@ -34,6 +36,9 @@ public class KeyboardInput implements KeyListener {
 		if (e.getKeyCode() == KeyEvent.VK_J) {
 			shooting = true;
 		}
+		if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+			boosting = true;
+		}
 	}
 
 	@Override
@@ -52,6 +57,9 @@ public class KeyboardInput implements KeyListener {
 		}
 		if (e.getKeyCode() == KeyEvent.VK_J) {
 			shooting = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+			boosting = false;
 		}
 	}
 }

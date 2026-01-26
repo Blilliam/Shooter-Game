@@ -18,11 +18,28 @@ public class Player extends Entity {
 	public int bulletTeir = 1;
 
 	public double health = 5;
-	public double speed = 5;
+	
+	//movement
+	double velX = 0;
+	double velY = 0;
+
+	
+	double accel = 0.6;     // acceleration strength
+	double maxSpeed = 6;
+	double friction = 0.96; // closer to 1 = more drift
+	
+	// --- Boost ---
+	double boostAccel = 1.2;
+	double boostMaxSpeed = 10;
+	boolean boosting = false;
+
+
 	public double delay = 400;
 
 	private long hitTimer = 0;
 	private long hitDelay = 1000;
+	
+	
 	
 	double angle = 0; // radians
 	
@@ -110,31 +127,84 @@ public class Player extends Entity {
 	}
 
 	public void movement() {
-	    // Calculate vector from player to mouse
+	    // Vector to mouse
 	    double dx = MouseInput.mouseX - (getX() + radius);
 	    double dy = MouseInput.mouseY - (getY() + radius);
-	    
-	    // Calculate angle to mouse
+
+	    // Face mouse
 	    angle = Math.atan2(dy, dx);
 
-	    // Move forward toward mouse with W
-	    if (gameObj.keyH.up) { // W key
-	        setX(getX() + Math.cos(angle) * speed);
-	        setY(getY() + Math.sin(angle) * speed);
+	    // Boost check (Shift)
+	    boolean boosting = gameObj.keyH.boosting;
+
+	    // Choose accel & max speed
+	    double currentAccel = boosting ? boostAccel : accel;
+	    double currentMaxSpeed = boosting ? boostMaxSpeed : maxSpeed;
+
+	    // Thrust forward (W)
+	    if (gameObj.keyH.up) {
+	        velX += Math.cos(angle) * currentAccel;
+	        velY += Math.sin(angle) * currentAccel;
 	    }
 
-	    // Move backward away from mouse with S
-	    if (gameObj.keyH.down) { // S key
-	        setX(getX() - Math.cos(angle) * speed);
-	        setY(getY() - Math.sin(angle) * speed);
+	    // Thrust backward (S)
+	    if (gameObj.keyH.down) {
+	        velX -= Math.cos(angle) * currentAccel;
+	        velY -= Math.sin(angle) * currentAccel;
 	    }
 
-	    // Keep player inside screen bounds
-	    if (getX() < 0) setX(0);
-	    if (getY() < 0) setY(0);
-	    if (getX() > AppPanel.WIDTH - radius * 2) setX(AppPanel.WIDTH - radius * 2);
-	    if (getY() > AppPanel.HEIGHT - radius * 2) setY(AppPanel.HEIGHT - radius * 2);
+	    // Clamp speed
+	    double speed = Math.sqrt(velX * velX + velY * velY);
+	    if (speed > currentMaxSpeed) {
+	        velX = (velX / speed) * currentMaxSpeed;
+	        velY = (velY / speed) * currentMaxSpeed;
+	    }
+
+	    // Apply movement
+	    setX(getX() + velX);
+	    setY(getY() + velY);
+
+	    // Friction (more slide while boosting)
+	 // Are we thrusting?
+	    boolean thrusting = gameObj.keyH.up || gameObj.keyH.down;
+
+	    // Friction rules
+	    double currentFriction;
+	    if (thrusting) {
+	        currentFriction = 0.99;
+	    } else if (boosting) {
+	        currentFriction = 0.98; // optional: extra slide while boosting
+	    } else {
+	        currentFriction = friction;
+	    }
+
+	    // Apply friction
+	    velX *= currentFriction;
+	    velY *= currentFriction;
+
+	    // Stop tiny jitter
+	    if (Math.abs(velX) < 0.01) velX = 0;
+	    if (Math.abs(velY) < 0.01) velY = 0;
+
+	    // Screen bounds + velocity cancel
+	    if (getX() < 0) {
+	        setX(0);
+	        velX = 0;
+	    }
+	    if (getY() < 0) {
+	        setY(0);
+	        velY = 0;
+	    }
+	    if (getX() > AppPanel.WIDTH - radius * 2) {
+	        setX(AppPanel.WIDTH - radius * 2);
+	        velX = 0;
+	    }
+	    if (getY() > AppPanel.HEIGHT - radius * 2) {
+	        setY(AppPanel.HEIGHT - radius * 2);
+	        velY = 0;
+	    }
 	}
+
 
 
 
@@ -167,6 +237,21 @@ public class Player extends Entity {
 	        Color overlayWhite = new Color(255, 255, 255, 128);
 	        g2.setColor(overlayWhite);
 	        g2.fillOval(drawX, drawY, size, size);
+	    }
+	    if (boosting) {
+	        AffineTransform old = g2.getTransform();
+
+	        // Move to player center
+	        g2.translate(drawX + size / 2, drawY + size / 2);
+	        g2.rotate(angle);
+
+	        // Flame color
+	        g2.setColor(new Color(255, 140, 0, 180));
+
+	        // Draw flame BEHIND ship
+	        g2.fillOval(-size / 2 - 18, -6, 18, 12);
+
+	        g2.setTransform(old);
 	    }
 	}
 

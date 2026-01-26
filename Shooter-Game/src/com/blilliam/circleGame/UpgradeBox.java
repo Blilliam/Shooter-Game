@@ -78,7 +78,7 @@ public class UpgradeBox {
     public void upgrade() {
         switch (type) {
             case 1 -> Bullet.dmg++;
-            case 2 -> gameObj.player1.speed *= 1.1;
+            case 2 -> gameObj.player1.maxSpeed *= 1.1;
             case 3 -> gameObj.player1.bulletTeir++;
             case 4 -> gameObj.player1.delay *= 0.85;
             case 5 -> gameObj.player1.health += 3;

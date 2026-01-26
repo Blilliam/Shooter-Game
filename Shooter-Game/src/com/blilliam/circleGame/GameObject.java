@@ -115,7 +115,7 @@ public class GameObject {
 		String s3 = "Coins: " + player1.totalCoins;
 
 		String s4 = "Damage: " + Bullet.dmg;
-		String s5 = "Speed: " + player1.speed;
+		String s5 = "Speed: " + player1.maxSpeed;
 		String s6 = "Attack Delay: " + player1.delay;
 		String s7 = "Health: " + player1.health;
 		String s8 = "Bullet Speed: " + Bullet.speed;
