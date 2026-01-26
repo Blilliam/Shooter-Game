@@ -2,8 +2,12 @@ package com.blilliam.circleGame;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 public class Bullet extends Entity {
     GameObject gameObj;
@@ -11,13 +15,25 @@ public class Bullet extends Entity {
     static int dmg = 1;
     static int speed = 15;
     public static double dropRate = 1;
+    
+    BufferedImage bulletImage;
 
     public Bullet(GameObject gameObj, double x, double y) {
         this.gameObj = gameObj;
         radius = 10;
         setY(y);
         setX(x);
+        loadBulletImage();
     }
+    
+    public void loadBulletImage() {
+		
+		try {
+			bulletImage = ImageIO.read(getClass().getResource("/Images/Bullet.png"));
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+	}
     
     public Bullet(GameObject gameObj, double x, double y, int angle) {
         this(gameObj, x, y);
@@ -67,7 +83,15 @@ public class Bullet extends Entity {
     }
     
     public void draw(Graphics2D g2) {
-        g2.setColor(new Color(255, 0, 0));
-        g2.fillArc((int)getX(), (int)getY(), this.radius * 2, this.radius * 2, 0, 360);
+        if (bulletImage != null) {
+            int size = radius * 10;
+
+            // Rotate bullet if needed
+            g2.drawImage(bulletImage, (int)getX() - 90, (int)getY() - 20, size, size, null);
+        } else {
+            // fallback red circle
+            g2.setColor(new Color(255, 0, 0));
+            g2.fillArc((int)getX() - 30, (int)getY(), this.radius * 2, this.radius * 2, 0, 360);
+        }
     }
 }

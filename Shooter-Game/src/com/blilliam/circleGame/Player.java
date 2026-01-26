@@ -1,8 +1,12 @@
 package com.blilliam.circleGame;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Player extends Entity {
 	public int totalCoins = 0;
@@ -19,13 +23,30 @@ public class Player extends Entity {
 
 	private long hitTimer = 0;
 	private long hitDelay = 1000;
+	
+	double angle = 0; // radians
+	
+	
+	BufferedImage sprite;
 
 	public Player(GameObject gameObj) {
 		radius = 30;
 		this.gameObj = gameObj;
 		setX(AppPanel.WIDTH / 2);
 		setY(AppPanel.HEIGHT - 60);
+		
+		getPlayerImage(); 
+		angle = Math.toRadians(270);
 
+	}
+	
+	public void getPlayerImage() {
+		
+		try {
+		    sprite = ImageIO.read(getClass().getResource("/Images/Nova Drift - Edited.png"));
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
 	}
 
 	public void update() {
@@ -157,32 +178,36 @@ public class Player extends Entity {
 	}
 
 	public void draw(Graphics2D g2) {
-		if (isDead) {
-			return;
-		}
-		Color playerColor;
+	    if (isDead) return;
 
-		if (isHit) {
-			long elapsed = System.currentTimeMillis() - hitTimer;
-			double progress = (double) elapsed / hitDelay;
-			if (progress > 1.0)
-				progress = 1.0;
+	    int drawX = (int) getX();
+	    int drawY = (int) getY();
+	    int size = radius * 2;
 
-			// Interpolate between red (255,0,0) and yellow (255,255,0)
-			int green = (int) (255 * progress); // goes from 0 → 255
-			playerColor = new Color(255, green, 0);
-		} else {
-			playerColor = Color.WHITE;
-		}
+	    if (sprite != null) {
+	        // Save original transform
+	        AffineTransform old = g2.getTransform();
 
-		g2.setColor(playerColor);
-		g2.fillOval((int) getX(), (int) getY(), this.radius * 2, this.radius * 2);
+	        // Move to center of sprite
+	        g2.translate(drawX + size / 2, drawY + size / 2);
 
-		if (isHit) {
-			Color overlayWhite = new Color(255, 255, 255, 128); // semi-transparent white
-			g2.setColor(overlayWhite);
-			g2.fillOval((int) getX(), (int) getY(), this.radius * 2, this.radius * 2);
-		}
+	        // Rotate
+	        g2.rotate(angle);
 
+	        // Draw centered
+	        g2.drawImage(sprite, -size / 2, -size / 2, size, size, null);
+
+	        // Restore transform
+	        g2.setTransform(old);
+	    }
+
+	    // hit flash overlay
+	    if (isHit) {
+	        Color overlayWhite = new Color(255, 255, 255, 128);
+	        g2.setColor(overlayWhite);
+	        g2.fillOval(drawX, drawY, size, size);
+	    }
 	}
+
+
 }

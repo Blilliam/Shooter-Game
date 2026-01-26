@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 public class GameObject {
 	Player player1 = new Player(this);
@@ -68,8 +71,9 @@ public class GameObject {
 
 	public void draw(Graphics2D g2) {
 		if (state == GameState.PLAY) {
+			
 			g2.setColor(Color.BLACK);
-			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
+		    g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
 
 			player1.draw(g2);
 			enemies.forEach(e -> e.draw(g2));
