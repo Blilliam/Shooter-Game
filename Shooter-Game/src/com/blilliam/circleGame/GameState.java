@@ -5,5 +5,6 @@ public enum GameState {
 	START,
 	DEAD,
 	PAUSE,
-	UPGRADING;
+	UPGRADING,
+	CONTROLS;
 }
