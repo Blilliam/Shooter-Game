@@ -11,18 +11,22 @@ import javax.imageio.ImageIO;
 
 public class Bullet extends Entity {
     GameObject gameObj;
-    int angle = 270;
+    double angle = 270;
     static int dmg = 1;
     static int speed = 15;
     public static double dropRate = 1;
     
     BufferedImage bulletImage;
 
-    public Bullet(GameObject gameObj, double x, double y) {
+    public Bullet(GameObject gameObj, double centerX, double centerY, double angle) {
         this.gameObj = gameObj;
+        this.angle = angle;
         radius = 10;
-        setY(y);
-        setX(x);
+
+        // Store the bullet's CENTER as its logical position
+        setX(centerX);
+        setY(centerY);
+
         loadBulletImage();
     }
     
@@ -34,11 +38,7 @@ public class Bullet extends Entity {
 		    e.printStackTrace();
 		}
 	}
-    
-    public Bullet(GameObject gameObj, double x, double y, int angle) {
-        this(gameObj, x, y);
-        this.angle = angle;
-    }
+   
     
     public void update() {
         double radianAngle = (angle * Math.PI) / 180;
@@ -84,14 +84,27 @@ public class Bullet extends Entity {
     
     public void draw(Graphics2D g2) {
         if (bulletImage != null) {
-            int size = radius * 10;
+            int size = radius * 10; // size of bullet image
 
-            // Rotate bullet if needed
-            g2.drawImage(bulletImage, (int)getX() - 90, (int)getY() - 20, size, size, null);
+            // Save original transform
+            var old = g2.getTransform();
+
+            // Move to bullet center
+            g2.translate(getX() + radius, getY() + radius);
+
+            // Rotate around center: offset by +90° to align sprite
+            g2.rotate(Math.toRadians(angle + 90));
+
+            // Draw centered
+            g2.drawImage(bulletImage, -size / 2, -size / 2, size, size, null);
+
+            // Restore original transform
+            g2.setTransform(old);
         } else {
-            // fallback red circle
             g2.setColor(new Color(255, 0, 0));
-            g2.fillArc((int)getX() - 30, (int)getY(), this.radius * 2, this.radius * 2, 0, 360);
+            g2.fillArc((int)getX(), (int)getY(), this.radius * 2, this.radius * 2, 0, 360);
         }
     }
+
+
 }

@@ -69,72 +69,31 @@ public class Player extends Entity {
 	}
 
 	public void createBullets() {
-		if (gameObj.keyH.shooting) {
-			if (bulletTeir == 1) {
-				teirBullet1();
-			}
-			if (bulletTeir == 2) {
-				teirBullet2();
-			}
-			if (bulletTeir == 3) {
-				teirBullet3();
-			}
-			if (bulletTeir == 4) {
-				teirBullet4();
-			}
-			if (bulletTeir == 5) {
-				teirBullet5();
-			}
+		if (MouseInput.mousePressed) {
+			if (System.currentTimeMillis() - timer <= delay) return;
+
+		    double centerX = getX() + radius; // player center
+		    double centerY = getY() + radius; // player center
+
+		    int numBullets = Math.min(bulletTeir, 5); // max 5 bullets
+		    double spread = 30; // total spread in degrees
+
+		    // If tier = 1 → 0 offset (single bullet)
+		    // If tier > 1 → bullets evenly spaced within spread
+		    for (int i = 0; i < numBullets; i++) {
+		        double offset = 0;
+		        if (numBullets > 1) {
+		            offset = -spread / 2 + (spread / (numBullets - 1)) * i;
+		        }
+		        double bulletAngle = Math.toDegrees(angle) + offset;
+		        gameObj.bullets.add(new Bullet(gameObj, centerX, centerY, bulletAngle));
+		    }
+
+		    timer = System.currentTimeMillis();
 		}
 	}
 
-	private void teirBullet1() {
-		if (System.currentTimeMillis() - timer > delay) {
-			gameObj.bullets.add(new Bullet(gameObj, getX() + radius, getY()));
-			setY(getY() + 10);
-			timer = System.currentTimeMillis();
-		}
-	}
-
-	private void teirBullet2() {
-		if (System.currentTimeMillis() - timer > delay) {
-			gameObj.bullets.add(new Bullet(gameObj, getX() + radius - 20, getY()));
-			gameObj.bullets.add(new Bullet(gameObj, getX() + radius + 20, getY()));
-			setY(getY() + 7);
-			timer = System.currentTimeMillis();
-		}
-	}
-
-	private void teirBullet3() {
-		if (System.currentTimeMillis() - timer > delay) {
-			for (int i = 280; i >= 260; i -= 10) {
-				gameObj.bullets.add(new Bullet(gameObj, getX() + radius, getY(), i));
-			}
-			setY(getY() + 3);
-			timer = System.currentTimeMillis();
-		}
-	}
-
-	private void teirBullet4() {
-		if (System.currentTimeMillis() - timer > delay) {
-			for (int i = 240; i <= 300; i += 10) {
-				gameObj.bullets.add(new Bullet(gameObj, getX() + radius, getY(), i));
-			}
-			setY(getY() + 2);
-			timer = System.currentTimeMillis();
-		}
-	}
-
-	private void teirBullet5() {
-		if (System.currentTimeMillis() - timer > delay) {
-			for (int i = 0; i <= 360; i += 10) {
-				gameObj.bullets.add(new Bullet(gameObj, getX() + radius, getY(), i));
-			}
-			setY(getY());
-			timer = System.currentTimeMillis();
-		}
-	}
-
+	
 	private void collisionWIthEnemies() {
 		for (Enemy e : gameObj.enemies) {
 			if (Entity.circleCollision(this, e)) {
@@ -151,31 +110,33 @@ public class Player extends Entity {
 	}
 
 	public void movement() {
-		if (gameObj.keyH.up) {
-			setY(getY() - speed);
-		}
-		if (gameObj.keyH.down) {
-			setY(getY() + speed);
-		}
-		if (gameObj.keyH.left) {
-			setX(getX() - speed);
-		}
-		if (gameObj.keyH.right) {
-			setX(getX() + speed);
-		}
-		if (getY() > AppPanel.HEIGHT - (radius * 2)) {
-			setY(AppPanel.HEIGHT - (radius * 2));
-		}
-		if (getX() > AppPanel.WIDTH - (radius * 2)) {
-			setX(AppPanel.WIDTH - (radius * 2));
-		}
-		if (getY() < 0) {
-			setY(0);
-		}
-		if (getX() < 0) {
-			setX(0);
-		}
+	    // Calculate vector from player to mouse
+	    double dx = MouseInput.mouseX - (getX() + radius);
+	    double dy = MouseInput.mouseY - (getY() + radius);
+	    
+	    // Calculate angle to mouse
+	    angle = Math.atan2(dy, dx);
+
+	    // Move forward toward mouse with W
+	    if (gameObj.keyH.up) { // W key
+	        setX(getX() + Math.cos(angle) * speed);
+	        setY(getY() + Math.sin(angle) * speed);
+	    }
+
+	    // Move backward away from mouse with S
+	    if (gameObj.keyH.down) { // S key
+	        setX(getX() - Math.cos(angle) * speed);
+	        setY(getY() - Math.sin(angle) * speed);
+	    }
+
+	    // Keep player inside screen bounds
+	    if (getX() < 0) setX(0);
+	    if (getY() < 0) setY(0);
+	    if (getX() > AppPanel.WIDTH - radius * 2) setX(AppPanel.WIDTH - radius * 2);
+	    if (getY() > AppPanel.HEIGHT - radius * 2) setY(AppPanel.HEIGHT - radius * 2);
 	}
+
+
 
 	public void draw(Graphics2D g2) {
 	    if (isDead) return;
