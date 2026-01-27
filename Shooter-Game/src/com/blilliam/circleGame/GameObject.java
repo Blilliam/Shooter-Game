@@ -23,11 +23,11 @@ public class GameObject {
 	int startButtonWidth = 300;
 	int startButtonHeight = 100;
 	GameButton startButton;
-	
+
 	int exitControlButtonWidth = 150;
 	int exitControlButtonHeight = 50;
 	GameButton exitControlButton;
-	
+
 	int controlButtonWidth = 400;
 	int controlButtonHeight = 100;
 	GameButton controlButton;
@@ -43,13 +43,13 @@ public class GameObject {
 		startButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
 				AppPanel.HEIGHT / 2 - startButtonHeight / 2, startButtonWidth, startButtonHeight, "START",
 				this::startGame);
-		
+
 		controlButtonWidth = 400;
 		controlButtonHeight = 100;
 		controlButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
-				AppPanel.HEIGHT / 2 - startButtonHeight / 2 - 100 - controlButtonHeight / 2 , startButtonWidth, startButtonHeight, "CONTROLS",
-				this::showControls);
-		
+				AppPanel.HEIGHT / 2 - startButtonHeight / 2 - 100 - controlButtonHeight / 2, startButtonWidth,
+				startButtonHeight, "CONTROLS", this::showControls);
+
 		exitControlButtonWidth = 150;
 		exitControlButtonHeight = 50;
 		exitControlButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
@@ -60,13 +60,19 @@ public class GameObject {
 	private void startGame() {
 		state = GameState.PLAY;
 	}
-	
+
 	private void showControls() {
 		state = GameState.CONTROLS;
 	}
-	
+
 	private void toStart() {
+		player1 = new Player(this);
+		enemies.clear();
+		bullets.clear();
+		coins.clear();
+		WaveSystem.waveNum = 1;
 		state = GameState.START;
+
 	}
 
 	public void update() {
@@ -80,6 +86,12 @@ public class GameObject {
 			enemies.forEach(e -> e.update());
 			bullets.removeIf(b -> b.isDead);
 			bullets.forEach(b -> b.update());
+
+			if (player1.isDead) {
+			    ScoreManager.checkAndUpdateHighScore(player1.score);
+			    state = GameState.DEAD;
+			}
+
 
 		} else if (state == GameState.START) {
 			// Update the start button (hover + click handled)
@@ -97,14 +109,17 @@ public class GameObject {
 			MouseInput.update();
 		} else if (state == GameState.CONTROLS) {
 			exitControlButton.update();
+		} else if (state == GameState.DEAD) {
+			exitControlButton.update();
+			MouseInput.update();
 		}
 	}
 
 	public void draw(Graphics2D g2) {
 		if (state == GameState.PLAY) {
-			
+
 			g2.setColor(Color.BLACK);
-		    g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
+			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
 
 			player1.draw(g2);
 			enemies.forEach(e -> e.draw(g2));
@@ -121,25 +136,52 @@ public class GameObject {
 			drawStats(g2);
 
 		} else if (state == GameState.START) {
+		
 			g2.setColor(new Color(30, 30, 80, 200)); // dark blue overlay
 			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
+			
+			int highScore = ScoreManager.loadHighScore();
+
+			g2.setColor(Color.WHITE);
+			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
+
+			String hs = "High Score: " + highScore;
+			FontMetrics fm = g2.getFontMetrics();
+			int x = (AppPanel.WIDTH - fm.stringWidth(hs)) / 2;
+
+			g2.drawString(hs, x, AppPanel.HEIGHT / 2 + 120);
+
 
 			startButton.draw(g2);
 			controlButton.draw(g2);
 		} else if (state == GameState.CONTROLS) {
 			drawControls(g2);
 			exitControlButton.draw(g2);
-		}
+		} else if (state == GameState.DEAD) {
+			g2.setColor(Color.BLACK);
+			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
+			
+			int highScore = ScoreManager.loadHighScore();
 
-		if (player1.isDead) {
+			g2.setColor(Color.WHITE);
+			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
+
+			String hs = "High Score: " + highScore;
+			FontMetrics fmHS = g2.getFontMetrics();
+			int xHS = (AppPanel.WIDTH - fmHS.stringWidth(hs)) / 2;
+
+			g2.drawString(hs, xHS, AppPanel.HEIGHT / 2 + 60);
+
+
 			g2.setColor(Color.RED);
 			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 100));
 			FontMetrics fmDeath = g2.getFontMetrics();
 			int xDead = (AppPanel.WIDTH - fmDeath.stringWidth("GAME OVER")) / 2;
-			g2.drawString("GAME OVER", xDead, (int) (AppPanel.HEIGHT / 2));
-			
+			g2.drawString("GAME OVER", xDead, AppPanel.HEIGHT / 2);
+
 			exitControlButton.draw(g2);
 		}
+
 	}
 
 	private void drawStats(Graphics2D g2) {
@@ -173,11 +215,11 @@ public class GameObject {
 		g2.drawString(s8, 0, 150);
 		g2.drawString(s9, 0, 180);
 	}
-	
+
 	public void drawControls(Graphics2D g2) {
 		g2.setColor(new Color(30, 30, 80, 200)); // dark blue overlay
 		g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
-		
+
 		g2.setColor(Color.BLACK);
 		g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
 		FontMetrics fm = g2.getFontMetrics();
@@ -186,17 +228,16 @@ public class GameObject {
 		String s2 = "Backwards: S";
 		String s3 = "Boost: Shift";
 		String s4 = "Shoot: Left Click";
-		
+
 		int x1 = (AppPanel.WIDTH - fm.stringWidth(s1)) / 2;
 		int x2 = (AppPanel.WIDTH - fm.stringWidth(s2)) / 2;
 		int x3 = (AppPanel.WIDTH - fm.stringWidth(s3)) / 2;
 		int x4 = (AppPanel.WIDTH - fm.stringWidth(s4)) / 2;
-		
 
-		g2.drawString(s1, x1, AppPanel.HEIGHT/2 - 100);
-		g2.drawString(s2, x2, AppPanel.HEIGHT/2 - 70);
-		g2.drawString(s3, x3, AppPanel.HEIGHT/2 - 40);
-		g2.drawString(s4, x4, AppPanel.HEIGHT/2 - 10);
+		g2.drawString(s1, x1, AppPanel.HEIGHT / 2 - 100);
+		g2.drawString(s2, x2, AppPanel.HEIGHT / 2 - 70);
+		g2.drawString(s3, x3, AppPanel.HEIGHT / 2 - 40);
+		g2.drawString(s4, x4, AppPanel.HEIGHT / 2 - 10);
 	}
 
 }
