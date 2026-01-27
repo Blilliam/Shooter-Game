@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
@@ -14,6 +16,14 @@ public class Player extends Entity {
 	public boolean isHit = false;
 	private long timer = 0;
 	GameObject gameObj;
+	//trail
+	ArrayList<TrailPoint> trail = new ArrayList<>();
+
+	int baseTrailSize = 18;
+	int boostTrailSize = 28;
+	int maxTrailLength = 35;
+
+	
 	
 	public int bulletTeir = 1;
 
@@ -67,6 +77,16 @@ public class Player extends Entity {
 	}
 
 	public void update() {
+		for (int i = 0; i < trail.size(); i++) {
+		    TrailPoint p = trail.get(i);
+		    p.fade();
+		    if (p.isDead()) {
+		        trail.remove(i);
+		        i--;
+		    }
+		}
+
+
 		if (isDead) {
 			return;
 		}
@@ -187,23 +207,56 @@ public class Player extends Entity {
 	    if (Math.abs(velY) < 0.01) velY = 0;
 
 	    // Screen bounds + velocity cancel
-	    if (getX() < 0) {
-	        setX(0);
-	        velX = 0;
+	    double screenW = AppPanel.WIDTH;
+	    double screenH = AppPanel.HEIGHT;
+	    double size = radius * 2;
+
+	    // Horizontal wrap
+	    boolean wrapped = false;
+
+	    if (getX() + size < 0) {
+	        setX(screenW);
+	        wrapped = true;
 	    }
-	    if (getY() < 0) {
-	        setY(0);
-	        velY = 0;
+	    else if (getX() > screenW) {
+	        setX(-size);
+	        wrapped = true;
 	    }
-	    if (getX() > AppPanel.WIDTH - radius * 2) {
-	        setX(AppPanel.WIDTH - radius * 2);
-	        velX = 0;
+
+	    if (getY() + size < 0) {
+	        setY(screenH);
+	        wrapped = true;
 	    }
-	    if (getY() > AppPanel.HEIGHT - radius * 2) {
-	        setY(AppPanel.HEIGHT - radius * 2);
-	        velY = 0;
+	    else if (getY() > screenH) {
+	        setY(-size);
+	        wrapped = true;
 	    }
+
+	    if (wrapped) {
+	        clearTrailOnWrap();
+	    }
+
+	 // Add trail at center
+	    trail.add(new TrailPoint(
+	        getX() + radius,
+	        getY() + radius,
+	        velX,
+	        velY,
+	        boosting
+	    ));
+
+	    // Limit trail length
+	    if (trail.size() > maxTrailLength) {
+	        trail.remove(0);
+	    }
+
+
 	}
+	
+	private void clearTrailOnWrap() {
+	    trail.clear();
+	}
+
 
 
 
@@ -211,6 +264,58 @@ public class Player extends Entity {
 	public void draw(Graphics2D g2) {
 	    if (isDead) return;
 
+	 // ===== ADVANCED TRAIL =====
+	    for (int i = 0; i < trail.size(); i++) {
+	        TrailPoint p = trail.get(i);
+
+	        // Progress (older = smaller)
+	        float t = i / (float) trail.size();
+
+	        // Stretch based on speed
+	        double speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+	        int stretch = (int)(speed * 3);
+
+	        int size = (int)((p.boosting ? boostTrailSize : baseTrailSize) * (1 - t));
+	        int alpha = (int)(p.alpha * 140 * (1 - t));
+
+	        // Color shift
+	        Color coreColor;
+	        Color glowColor;
+
+	        if (p.boosting) {
+	            coreColor = new Color(180, 220, 255, alpha); // icy blue
+	            glowColor = new Color(120, 180, 255, alpha / 2);
+	        } else {
+	            coreColor = new Color(255, 255, 255, alpha);
+	            glowColor = new Color(255, 255, 255, alpha / 2);
+	        }
+
+	        // Direction of movement
+	        double angle = Math.atan2(p.vy, p.vx);
+	        double ox = Math.cos(angle) * stretch;
+	        double oy = Math.sin(angle) * stretch;
+
+	        // Glow (big, soft)
+	        g2.setColor(glowColor);
+	        g2.fillOval(
+	            (int)(p.x - size / 2 - ox * 0.5),
+	            (int)(p.y - size / 2 - oy * 0.5),
+	            size + 10,
+	            size + 10
+	        );
+
+	        // Core trail
+	        g2.setColor(coreColor);
+	        g2.fillOval(
+	            (int)(p.x - size / 2 - ox),
+	            (int)(p.y - size / 2 - oy),
+	            size,
+	            size
+	        );
+	    }
+
+
+	    
 	    int drawX = (int) getX();
 	    int drawY = (int) getY();
 	    int size = radius * 2;
