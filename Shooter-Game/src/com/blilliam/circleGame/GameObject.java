@@ -11,51 +11,73 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 public class GameObject {
-	Player player1 = new Player(this);
-	ArrayList<Enemy> enemies = new ArrayList<Enemy>();
-	ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-	ArrayList<Coin> coins = new ArrayList<Coin>();
-	WaveSystem waves = new WaveSystem(this);
-	Upgrade upgrades = new Upgrade(this);
+	Player player1;
+	ArrayList<Enemy> enemies;
+	ArrayList<Bullet> bullets;
+	ArrayList<Coin> coins;
+	WaveSystem waves;
+	Upgrade upgrades;
 	KeyboardInput keyH;
 	MouseInput mouseHandler;
 
-	int startButtonWidth = 300;
-	int startButtonHeight = 100;
+	int startButtonWidth;
+	int startButtonHeight;
 	GameButton startButton;
 
-	int exitControlButtonWidth = 150;
-	int exitControlButtonHeight = 50;
+	int exitControlButtonWidth;
+	int exitControlButtonHeight;
 	GameButton exitControlButton;
 
-	int controlButtonWidth = 400;
-	int controlButtonHeight = 100;
+	int controlButtonWidth;
+	int controlButtonHeight;
 	GameButton controlButton;
 
-	public static GameState state = GameState.START;
+	public static GameState state;
 
 	public GameObject(KeyboardInput keyH, MouseInput mouseHandler) {
-		this.keyH = keyH;
-		this.mouseHandler = mouseHandler;
+	    this.keyH = keyH;
+	    this.mouseHandler = mouseHandler;
 
-		startButtonWidth = 300;
-		startButtonHeight = 100;
-		startButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
-				AppPanel.HEIGHT / 2 - startButtonHeight / 2, startButtonWidth, startButtonHeight, "START",
-				this::startGame);
+	    state = GameState.START; // force START first
 
-		controlButtonWidth = 400;
-		controlButtonHeight = 100;
-		controlButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
-				AppPanel.HEIGHT / 2 - startButtonHeight / 2 - 100 - controlButtonHeight / 2, startButtonWidth,
-				startButtonHeight, "CONTROLS", this::showControls);
+	    enemies = new ArrayList<>();
+	    bullets = new ArrayList<>();
+	    coins = new ArrayList<>();
 
-		exitControlButtonWidth = 150;
-		exitControlButtonHeight = 50;
-		exitControlButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
-				AppPanel.HEIGHT / 2 + startButtonHeight / 2 + 50, startButtonWidth, startButtonHeight, "EXIT BACK",
-				this::toStart);
+	    player1 = new Player(this);
+	    waves = new WaveSystem(this);
+	    upgrades = new Upgrade(this);
+
+	    startButtonWidth = 300;
+	    startButtonHeight = 100;
+	    startButton = new GameButton(
+	        AppPanel.WIDTH / 2 - startButtonWidth / 2,
+	        AppPanel.HEIGHT / 2 - startButtonHeight / 2,
+	        startButtonWidth,
+	        startButtonHeight,
+	        "START",
+	        this::startGame
+	    );
+
+	    controlButton = new GameButton(
+	        AppPanel.WIDTH / 2 - startButtonWidth / 2,
+	        AppPanel.HEIGHT / 2 - startButtonHeight / 2 - 100 - controlButtonHeight / 2,
+	        startButtonWidth,
+	        startButtonHeight,
+	        "CONTROLS",
+	        this::showControls
+	    );
+
+	    exitControlButton = new GameButton(
+	        AppPanel.WIDTH / 2 - startButtonWidth / 2,
+	        AppPanel.HEIGHT / 2 + startButtonHeight / 2 + 50,
+	        startButtonWidth,
+	        startButtonHeight,
+	        "EXIT BACK",
+	        this::toStart
+	    );
 	}
+
 
 	private void startGame() {
 		state = GameState.PLAY;
@@ -88,10 +110,9 @@ public class GameObject {
 			bullets.forEach(b -> b.update());
 
 			if (player1.isDead) {
-			    ScoreManager.checkAndUpdateHighScore(player1.score);
-			    state = GameState.DEAD;
+				ScoreManager.checkAndUpdateHighScore(player1.score);
+				state = GameState.DEAD;
 			}
-
 
 		} else if (state == GameState.START) {
 			// Update the start button (hover + click handled)
@@ -136,10 +157,10 @@ public class GameObject {
 			drawStats(g2);
 
 		} else if (state == GameState.START) {
-		
+
 			g2.setColor(new Color(30, 30, 80, 200)); // dark blue overlay
 			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
-			
+
 			int highScore = ScoreManager.loadHighScore();
 
 			g2.setColor(Color.WHITE);
@@ -151,7 +172,6 @@ public class GameObject {
 
 			g2.drawString(hs, x, AppPanel.HEIGHT / 2 + 120);
 
-
 			startButton.draw(g2);
 			controlButton.draw(g2);
 		} else if (state == GameState.CONTROLS) {
@@ -160,7 +180,7 @@ public class GameObject {
 		} else if (state == GameState.DEAD) {
 			g2.setColor(Color.BLACK);
 			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
-			
+
 			int highScore = ScoreManager.loadHighScore();
 
 			g2.setColor(Color.WHITE);
@@ -171,7 +191,6 @@ public class GameObject {
 			int xHS = (AppPanel.WIDTH - fmHS.stringWidth(hs)) / 2;
 
 			g2.drawString(hs, xHS, AppPanel.HEIGHT / 2 + 60);
-
 
 			g2.setColor(Color.RED);
 			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 100));
