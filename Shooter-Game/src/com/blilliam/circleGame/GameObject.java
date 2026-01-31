@@ -15,7 +15,7 @@ public class GameObject {
 	Player player1;
 	ArrayList<Enemy> enemies;
 	ArrayList<Bullet> bullets;
-	ArrayList<Coin> coins;
+	ArrayList<Exp> exp;
 	WaveSystem waves;
 	Upgrade upgrades;
 	KeyboardInput keyH;
@@ -45,7 +45,7 @@ public class GameObject {
 
 		enemies = new ArrayList<>();
 		bullets = new ArrayList<>();
-		coins = new ArrayList<>();
+		exp = new ArrayList<>();
 
 		player1 = new Player(this);
 		waves = new WaveSystem(this);
@@ -79,7 +79,7 @@ public class GameObject {
 		player1 = new Player(this);
 		enemies.clear();
 		bullets.clear();
-		coins.clear();
+		exp.clear();
 		WaveSystem.waveNum = 1;
 		state = GameState.START;
 
@@ -90,8 +90,8 @@ public class GameObject {
 			waves.update();
 
 			enemies.removeIf(e -> e.isDead);
-			coins.removeIf(c -> c.isDead);
-			coins.forEach(c -> c.update());
+			exp.removeIf(c -> c.isDead);
+			exp.forEach(c -> c.update());
 
 			player1.update();
 			enemies.forEach(e -> e.update());
@@ -102,8 +102,10 @@ public class GameObject {
 				ScoreManager.checkAndUpdateHighScore(player1.score);
 				state = GameState.DEAD;
 			}
-			if (keyH.wantToUpgrade == true /* && player1.canUpgrade */) {
+			if (player1.totalUpgradesAvailible > 0 && keyH.upgradePressed) {
+
 				state = GameState.UPGRADING;
+				keyH.upgradePressed = false;
 			}
 
 		} else if (state == GameState.START) {
@@ -115,16 +117,16 @@ public class GameObject {
 			MouseInput.update();
 		} else if (state == GameState.UPGRADING) {
 
-			// collect coins once
-			while (!coins.isEmpty()) {
-				player1.totalCoins += coins.get(0).value;
-				coins.remove(0);
+			// collect exp once
+			while (!exp.isEmpty()) {
+				player1.currExp += exp.get(0).value;
+				exp.remove(0);
 			}
 
 			upgrades.update();
 
 			// TOGGLE back to play
-			if (keyH.wantToUpgrade == false) {
+			if (player1.totalUpgradesAvailible == 0) {
 				state = GameState.PLAY;
 			}
 
@@ -141,16 +143,13 @@ public class GameObject {
 
 	public void draw(Graphics2D g2) {
 		if (state == GameState.PLAY) {
-			
+
 			// ---- BACKGROUND (always first) ----
 			if (sprite != null) {
 				int imgW = sprite.getWidth();
 				int imgH = sprite.getHeight();
 
-				double scale = Math.max(
-				    (double) AppPanel.WIDTH / imgW,
-				    (double) AppPanel.HEIGHT / imgH
-				);
+				double scale = Math.max((double) AppPanel.WIDTH / imgW, (double) AppPanel.HEIGHT / imgH);
 
 				int drawW = (int) (imgW * scale);
 				int drawH = (int) (imgH * scale);
@@ -160,17 +159,15 @@ public class GameObject {
 
 				g2.drawImage(sprite, x, y, drawW, drawH, null);
 
-
 			} else {
-			    g2.setColor(Color.BLACK);
-			    g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
+				g2.setColor(Color.BLACK);
+				g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
 			}
-
 
 			player1.draw(g2);
 			enemies.forEach(e -> e.draw(g2));
 			bullets.forEach(b -> b.draw(g2));
-			coins.forEach(c -> c.draw(g2));
+			exp.forEach(c -> c.draw(g2));
 
 			drawStats(g2);
 
@@ -234,8 +231,8 @@ public class GameObject {
 		FontMetrics fm = g2.getFontMetrics();
 
 		String s1 = "Score: " + player1.score;
-		String s2 = "Wave Number: " + WaveSystem.waveNum;
-		String s3 = "Coins: " + player1.totalCoins;
+		String s2 = "total Upgrades Availible: " + player1.totalUpgradesAvailible;
+		String s3 = "exp: " + player1.currExp;
 
 		String s4 = "Damage: " + Bullet.dmg;
 		String s5 = "Speed: " + player1.maxSpeed;

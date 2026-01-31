@@ -97,7 +97,7 @@ public class UpgradeBox {
             	Bullet.speed *= 1.2;
             	break;
             case 7:
-            	Coin.valueMult *= 1.5;
+            	Exp.valueMult *= 1.5;
             	break;
             case 8:
             	Bullet.dropRate *= 0.8;

@@ -49,7 +49,7 @@ public class Bullet extends Entity {
         setY(getY() + dy);
 
         // Temporary list for adding new enemies safely
-        List<Coin> toAddCoins = new ArrayList<>();
+        List<Exp> toAddCoins = new ArrayList<>();
         List<Enemy> toAddEnemies = new ArrayList<>();
         
         for (Enemy e : gameObj.enemies) {
@@ -64,11 +64,11 @@ public class Bullet extends Entity {
 	                }
 	                
 	                for (int i = 0; i < (int) dropRate; i++) {
-	                	toAddCoins.add(new Coin(gameObj, e.getTeir(), e.getX() + (i * 5), e.getY() + (i * 5)));
+	                	toAddCoins.add(new Exp(gameObj, e.getTeir(), e.getX() + (i * 5), e.getY() + (i * 5)));
 	                }
 	                
 	                if (dropRate % 1 > Math.random()) {
-	                	toAddCoins.add(new Coin(gameObj, e.getTeir(), e.getX(), e.getY()));
+	                	toAddCoins.add(new Exp(gameObj, e.getTeir(), e.getX(), e.getY()));
 	                }
 	                
 	                isDead = true;
@@ -79,7 +79,7 @@ public class Bullet extends Entity {
         
         // Add new enemies AFTER loop
         gameObj.enemies.addAll(toAddEnemies);
-        gameObj.coins.addAll(toAddCoins);
+        gameObj.exp.addAll(toAddCoins);
     }
     
     public void draw(Graphics2D g2) {

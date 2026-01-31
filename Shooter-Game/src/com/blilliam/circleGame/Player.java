@@ -11,7 +11,7 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 
 public class Player extends Entity {
-	public int totalCoins = 0;
+	public int currExp = 0;
 	public int score = 0;
 	public boolean isHit = false;
 	private long timer = 0;
@@ -23,7 +23,9 @@ public class Player extends Entity {
 	int boostTrailSize = 28;
 	int maxTrailLength = 35;
 
-	
+	public int expToUpgrade = 10;
+	public int totalUpgradesAvailible = 0;
+
 	
 	public int bulletTeir = 1;
 
@@ -57,7 +59,7 @@ public class Player extends Entity {
 	BufferedImage sprite;
 
 	public Player(GameObject gameObj) {
-		radius = 15;
+		radius = 30;
 		this.gameObj = gameObj;
 		setX(AppPanel.WIDTH / 2);
 		setY(AppPanel.HEIGHT - 60);
@@ -85,14 +87,20 @@ public class Player extends Entity {
 		        i--;
 		    }
 		}
+		
+		if (currExp >= expToUpgrade) {
+		    currExp -= expToUpgrade;   // cap bar
+		    totalUpgradesAvailible++;
+		}
 
 
 		if (isDead) {
 			return;
+			
 		}
-		for (Coin e : gameObj.coins) {
+		for (Exp e : gameObj.exp) {
 			if (Entity.circleCollision(this, e)) {
-				totalCoins += e.value;
+				currExp += e.value;
 				e.isDead = true;
 			}
 		}

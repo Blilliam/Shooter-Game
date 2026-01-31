@@ -14,7 +14,7 @@ public class KeyboardInput implements KeyListener {
 	
 	public boolean boosting = false;
 	
-	public boolean wantToUpgrade = false;
+	public boolean upgradePressed = false;
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -42,8 +42,9 @@ public class KeyboardInput implements KeyListener {
 			boosting = true;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			wantToUpgrade = !wantToUpgrade;
+		    upgradePressed = true;
 		}
+
 	}
 
 	@Override
@@ -66,5 +67,9 @@ public class KeyboardInput implements KeyListener {
 		if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
 			boosting = false;
 		}
+		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+		    upgradePressed = false;
+		}
+
 	}
 }
