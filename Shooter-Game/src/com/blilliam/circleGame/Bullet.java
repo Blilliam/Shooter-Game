@@ -38,7 +38,7 @@ public class Bullet extends Entity {
 		    e.printStackTrace();
 		}
 	}
-   
+    
     
     public void update() {
         double radianAngle = (angle * Math.PI) / 180;

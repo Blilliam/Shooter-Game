@@ -19,7 +19,6 @@ public class WaveSystem {
 			waveNum++;
 			createEnemies();
 
-			gameObj.state = GameState.UPGRADING;
 			return;
 		}
 	}

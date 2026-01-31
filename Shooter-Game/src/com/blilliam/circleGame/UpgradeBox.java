@@ -77,14 +77,31 @@ public class UpgradeBox {
 
     public void upgrade() {
         switch (type) {
-            case 1 -> Bullet.dmg++;
-            case 2 -> gameObj.player1.maxSpeed *= 1.1;
-            case 3 -> gameObj.player1.bulletTeir++;
-            case 4 -> gameObj.player1.delay *= 0.85;
-            case 5 -> gameObj.player1.health += 3;
-            case 6 -> Bullet.speed *= 1.2;
-            case 7 -> Coin.valueMult *= 1.5;
-            case 8 -> Bullet.dropRate *= 0.8;
+            case 1:
+            	Bullet.dmg++;
+            	break;
+            case 2:
+            	gameObj.player1.maxSpeed *= 1.1;
+            	gameObj.player1.boostMaxSpeed *= 1.1;
+            	break;
+            case 3:
+            	gameObj.player1.bulletTeir++;
+            	break;
+            case 4:
+            	gameObj.player1.delay *= 0.85;
+            	break;
+            case 5:
+            	gameObj.player1.health += 3;
+            	break;
+            case 6:
+            	Bullet.speed *= 1.2;
+            	break;
+            case 7:
+            	Coin.valueMult *= 1.5;
+            	break;
+            case 8:
+            	Bullet.dropRate *= 0.8;
+            	break;
         }
         cost = (int)Math.ceil(cost * 1.2);
        

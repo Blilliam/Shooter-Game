@@ -34,13 +34,13 @@ public class Player extends Entity {
 	double velY = 0;
 
 	
-	double accel = 0.6;     // acceleration strength
-	double maxSpeed = 6;
+	double accel = 0.1;     // acceleration strength
+	double maxSpeed = 4;
 	double friction = 0.96; // closer to 1 = more drift
 	
 	// --- Boost ---
 	double boostAccel = 1.2;
-	double boostMaxSpeed = 10;
+	double boostMaxSpeed = 7;
 	boolean boosting = false;
 
 
@@ -57,7 +57,7 @@ public class Player extends Entity {
 	BufferedImage sprite;
 
 	public Player(GameObject gameObj) {
-		radius = 30;
+		radius = 15;
 		this.gameObj = gameObj;
 		setX(AppPanel.WIDTH / 2);
 		setY(AppPanel.HEIGHT - 60);

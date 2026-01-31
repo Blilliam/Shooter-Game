@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,52 +33,39 @@ public class GameObject {
 	int controlButtonHeight;
 	GameButton controlButton;
 
+	BufferedImage sprite;
+
 	public static GameState state;
 
 	public GameObject(KeyboardInput keyH, MouseInput mouseHandler) {
-	    this.keyH = keyH;
-	    this.mouseHandler = mouseHandler;
+		this.keyH = keyH;
+		this.mouseHandler = mouseHandler;
 
-	    state = GameState.START; // force START first
+		state = GameState.START; // force START first
 
-	    enemies = new ArrayList<>();
-	    bullets = new ArrayList<>();
-	    coins = new ArrayList<>();
+		enemies = new ArrayList<>();
+		bullets = new ArrayList<>();
+		coins = new ArrayList<>();
 
-	    player1 = new Player(this);
-	    waves = new WaveSystem(this);
-	    upgrades = new Upgrade(this);
+		player1 = new Player(this);
+		waves = new WaveSystem(this);
+		upgrades = new Upgrade(this);
 
-	    startButtonWidth = 300;
-	    startButtonHeight = 100;
-	    startButton = new GameButton(
-	        AppPanel.WIDTH / 2 - startButtonWidth / 2,
-	        AppPanel.HEIGHT / 2 - startButtonHeight / 2,
-	        startButtonWidth,
-	        startButtonHeight,
-	        "START",
-	        this::startGame
-	    );
+		startButtonWidth = 300;
+		startButtonHeight = 100;
+		startButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
+				AppPanel.HEIGHT / 2 - startButtonHeight / 2, startButtonWidth, startButtonHeight, "START",
+				this::startGame);
 
-	    controlButton = new GameButton(
-	        AppPanel.WIDTH / 2 - startButtonWidth / 2,
-	        AppPanel.HEIGHT / 2 - startButtonHeight / 2 - 100 - controlButtonHeight / 2,
-	        startButtonWidth,
-	        startButtonHeight,
-	        "CONTROLS",
-	        this::showControls
-	    );
+		controlButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
+				AppPanel.HEIGHT / 2 - startButtonHeight / 2 + 230 + controlButtonHeight / 2, startButtonWidth,
+				startButtonHeight, "CONTROLS", this::showControls);
 
-	    exitControlButton = new GameButton(
-	        AppPanel.WIDTH / 2 - startButtonWidth / 2,
-	        AppPanel.HEIGHT / 2 + startButtonHeight / 2 + 50,
-	        startButtonWidth,
-	        startButtonHeight,
-	        "EXIT BACK",
-	        this::toStart
-	    );
+		exitControlButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
+				AppPanel.HEIGHT / 2 + startButtonHeight / 2 + 50, startButtonWidth, startButtonHeight, "EXIT BACK",
+				this::toStart);
+		getBackgroundImage();
 	}
-
 
 	private void startGame() {
 		state = GameState.PLAY;
@@ -103,6 +91,7 @@ public class GameObject {
 
 			enemies.removeIf(e -> e.isDead);
 			coins.removeIf(c -> c.isDead);
+			coins.forEach(c -> c.update());
 
 			player1.update();
 			enemies.forEach(e -> e.update());
@@ -113,6 +102,9 @@ public class GameObject {
 				ScoreManager.checkAndUpdateHighScore(player1.score);
 				state = GameState.DEAD;
 			}
+			if (keyH.wantToUpgrade == true /* && player1.canUpgrade */) {
+				state = GameState.UPGRADING;
+			}
 
 		} else if (state == GameState.START) {
 			// Update the start button (hover + click handled)
@@ -122,25 +114,58 @@ public class GameObject {
 			// Clear click flag after updates
 			MouseInput.update();
 		} else if (state == GameState.UPGRADING) {
-			for (int i = 0; i < coins.size(); i++) {
+
+			// collect coins once
+			while (!coins.isEmpty()) {
 				player1.totalCoins += coins.get(0).value;
 				coins.remove(0);
 			}
+
 			upgrades.update();
+
+			// TOGGLE back to play
+			if (keyH.wantToUpgrade == false) {
+				state = GameState.PLAY;
+			}
+
 			MouseInput.update();
 		} else if (state == GameState.CONTROLS) {
 			exitControlButton.update();
+			MouseInput.update();
 		} else if (state == GameState.DEAD) {
 			exitControlButton.update();
 			MouseInput.update();
 		}
+
 	}
 
 	public void draw(Graphics2D g2) {
 		if (state == GameState.PLAY) {
+			
+			// ---- BACKGROUND (always first) ----
+			if (sprite != null) {
+				int imgW = sprite.getWidth();
+				int imgH = sprite.getHeight();
 
-			g2.setColor(Color.BLACK);
-			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
+				double scale = Math.max(
+				    (double) AppPanel.WIDTH / imgW,
+				    (double) AppPanel.HEIGHT / imgH
+				);
+
+				int drawW = (int) (imgW * scale);
+				int drawH = (int) (imgH * scale);
+
+				int x = (AppPanel.WIDTH - drawW) / 2;
+				int y = (AppPanel.HEIGHT - drawH) / 2;
+
+				g2.drawImage(sprite, x, y, drawW, drawH, null);
+
+
+			} else {
+			    g2.setColor(Color.BLACK);
+			    g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
+			}
+
 
 			player1.draw(g2);
 			enemies.forEach(e -> e.draw(g2));
@@ -257,6 +282,15 @@ public class GameObject {
 		g2.drawString(s2, x2, AppPanel.HEIGHT / 2 - 70);
 		g2.drawString(s3, x3, AppPanel.HEIGHT / 2 - 40);
 		g2.drawString(s4, x4, AppPanel.HEIGHT / 2 - 10);
+	}
+
+	public void getBackgroundImage() {
+
+		try {
+			sprite = ImageIO.read(getClass().getResource("/Images/GreenPlanetBackground.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

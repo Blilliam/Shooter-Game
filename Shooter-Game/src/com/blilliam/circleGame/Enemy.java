@@ -109,21 +109,22 @@ public class Enemy extends Entity {
 		}
 
 		// bounce
-		if (getY() > AppPanel.HEIGHT - (radius * 2)) {
-			setY(AppPanel.HEIGHT - (radius * 2));
-			dy = -dy;
+		int diameter = radius * 2;
+
+		// Horizontal wrap
+		if (getX() + diameter < 0) {
+		    setX(AppPanel.WIDTH);
 		}
-		if (getX() > AppPanel.WIDTH - (radius * 2)) {
-			setX(AppPanel.WIDTH - (radius * 2));
-			dx = -dx;
+		else if (getX() > AppPanel.WIDTH) {
+		    setX(-diameter);
 		}
-		if (getY() < 0) {
-			setY(0);
-			dy = -dy;
+
+		// Vertical wrap
+		if (getY() + diameter < 0) {
+		    setY(AppPanel.HEIGHT);
 		}
-		if (getX() < 0) {
-			setX(0);
-			dx = -dx;
+		else if (getY() > AppPanel.HEIGHT) {
+		    setY(-diameter);
 		}
 
 		if (health <= 0) {

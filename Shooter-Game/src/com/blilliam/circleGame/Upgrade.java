@@ -120,7 +120,7 @@ public class Upgrade {
 			// EXIT BUTTON
 			if (mx >= exitX && mx <= exitX + exitW && my >= exitY && my <= exitY + exitH) {
 
-				gameObj.state = GameState.PLAY;
+				gameObj.keyH.wantToUpgrade = false;
 				MouseInput.update();
 				return;
 			}
