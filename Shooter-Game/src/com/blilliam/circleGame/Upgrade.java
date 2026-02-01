@@ -19,6 +19,8 @@ public class Upgrade {
 	final int numberOfTotalBoxes = 8;
 	final int numberOfcurrBoxes = 3;
 
+	private boolean upgradeChosen = false; // new
+
 	final int rectWidth = 300;
 	final int rectHeight = 450;
 
@@ -45,8 +47,7 @@ public class Upgrade {
 
 		// Exit button
 		exitButton = new GameButton(AppPanel.WIDTH - 130, 30, 100, 50, "EXIT", () -> {
-			gameObj.state = GameState.PLAY;
-			gameObj.keyH.upgradePressed = false;
+			GameObject.state = GameState.PLAY; // mark upgrade session as finished
 			MouseInput.update();
 		});
 
@@ -66,38 +67,54 @@ public class Upgrade {
 	// =========================
 	public void update() {
 
-		exitButton.update();
-		rerollButton.update();
+	    exitButton.update();
+	    rerollButton.update();
 
-		if (MouseInput.mouseClicked) {
+	    // Only handle **one click per frame**
+	    if (MouseInput.mouseClicked) {
 
-			// UPGRADE BOX CLICK
-			for (int i = 0; i < numberOfcurrBoxes; i++) {
-				UpgradeBox box = totalBoxes[currBoxIndex[i]];
+	        boolean didUpgrade = false;
 
-				if (box != null && box.isHovering()) {
+	        // Check exit button first
+	        if (exitButton.isHovering()) {
+	            upgradeChosen = true;
+	            didUpgrade = true; // used to clear click
+	        }
 
-					if (gameObj.player1.totalUpgradesAvailible > 0) {
-						gameObj.player1.totalUpgradesAvailible--;
-						box.upgrade();
+	        // Only handle boxes if we haven’t exited
+	        if (!didUpgrade) {
+	            for (int i = 0; i < numberOfcurrBoxes; i++) {
+	                UpgradeBox box = totalBoxes[currBoxIndex[i]];
 
-						gameObj.state = GameState.PLAY;
-						gameObj.keyH.upgradePressed = false;
+	                if (box != null && box.isHovering()) {
+	                    if (gameObj.player1.totalUpgradesAvailible > 0) {
+	                        gameObj.player1.totalUpgradesAvailible--;
+	                        box.upgrade();
 
-						randomCurrBox();
-					}
+	                        upgradeChosen = true;
+	                        randomCurrBox();
+	                        didUpgrade = true;
+	                        
+	                        gameObj.player1.expToUpgrade *= 1.3;
+	                        
+	                        break; // stop after first valid box
+	                    }
+	                }
+	            }
+	        }
 
-					MouseInput.update();
-					return;
-				}
-			}
-		}
+	        // CLEAR mouse click AFTER handling **one action**
+	        if (didUpgrade) {
+	            MouseInput.mouseClicked = false;
+	        }
+	    }
 
-		// Update box animations
-		for (int i = 0; i < numberOfcurrBoxes; i++) {
-			totalBoxes[currBoxIndex[i]].updateAnimation();
-		}
+	    // Update box animations
+	    for (int i = 0; i < numberOfcurrBoxes; i++) {
+	        totalBoxes[currBoxIndex[i]].updateAnimation();
+	    }
 	}
+
 
 	// =========================
 	// DRAW
@@ -155,4 +172,13 @@ public class Upgrade {
 			totalBoxes[r].startAnimation();
 		}
 	}
+
+	public boolean hasFinishedUpgrading() {
+		return upgradeChosen || gameObj.player1.totalUpgradesAvailible == 0;
+	}
+
+	public void reset() {
+		upgradeChosen = false;
+	}
+
 }

@@ -24,7 +24,9 @@ public class Player extends Entity {
 	int maxTrailLength = 35;
 
 	public int expToUpgrade = 10;
-	public int totalUpgradesAvailible = 0;
+	public int totalUpgradesAvailible = 1;
+	public boolean expCollectedForUpgrade = false;
+
 
 	
 	public int bulletTeir = 1;

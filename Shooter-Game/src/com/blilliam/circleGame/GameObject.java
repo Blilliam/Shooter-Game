@@ -53,6 +53,7 @@ public class GameObject {
 
 		startButtonWidth = 300;
 		startButtonHeight = 100;
+		
 		startButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
 				AppPanel.HEIGHT / 2 - startButtonHeight / 2, startButtonWidth, startButtonHeight, "START",
 				this::startGame);
@@ -87,6 +88,8 @@ public class GameObject {
 
 	public void update() {
 		if (state == GameState.PLAY) {
+			ScoreManager.checkAndUpdateHighScore(player1.score);
+			
 			waves.update();
 
 			enemies.removeIf(e -> e.isDead);
@@ -99,14 +102,18 @@ public class GameObject {
 			bullets.forEach(b -> b.update());
 
 			if (player1.isDead) {
-				ScoreManager.checkAndUpdateHighScore(player1.score);
 				state = GameState.DEAD;
 			}
-			if (player1.totalUpgradesAvailible > 0 && keyH.upgradePressed) {
+			if (state == GameState.PLAY) {
+			    if (player1.totalUpgradesAvailible > 0 && keyH.upgradePressed) {
+			        state = GameState.UPGRADING;
+			        keyH.upgradePressed = false;
 
-				state = GameState.UPGRADING;
-				keyH.upgradePressed = false;
+			        player1.expCollectedForUpgrade = false; // reset XP collection
+			        upgrades.reset(); // reset upgrade selection
+			    }
 			}
+
 
 		} else if (state == GameState.START) {
 			// Update the start button (hover + click handled)
@@ -117,20 +124,25 @@ public class GameObject {
 			MouseInput.update();
 		} else if (state == GameState.UPGRADING) {
 
-			// collect exp once
-			while (!exp.isEmpty()) {
-				player1.currExp += exp.get(0).value;
-				exp.remove(0);
+			// Only collect exp **once when entering UPGRADING**
+			if (!player1.expCollectedForUpgrade) {
+				while (!exp.isEmpty()) {
+					player1.currExp += exp.get(0).value;
+					exp.remove(0);
+				}
+				player1.expCollectedForUpgrade = true;
 			}
 
-			upgrades.update();
+			upgrades.update(); // lets player select upgrades
 
-			// TOGGLE back to play
-			if (player1.totalUpgradesAvailible == 0) {
+			// Only go back to PLAY **after player confirms upgrade or no upgrades left**
+			if (player1.totalUpgradesAvailible == 0 && upgrades.hasFinishedUpgrading()) {
 				state = GameState.PLAY;
+				player1.expCollectedForUpgrade = false; // reset for next time
 			}
 
 			MouseInput.update();
+
 		} else if (state == GameState.CONTROLS) {
 			exitControlButton.update();
 			MouseInput.update();
@@ -168,6 +180,8 @@ public class GameObject {
 			enemies.forEach(e -> e.draw(g2));
 			bullets.forEach(b -> b.draw(g2));
 			exp.forEach(c -> c.draw(g2));
+
+			drawXPBar(g2);
 
 			drawStats(g2);
 
@@ -231,8 +245,6 @@ public class GameObject {
 		FontMetrics fm = g2.getFontMetrics();
 
 		String s1 = "Score: " + player1.score;
-		String s2 = "total Upgrades Availible: " + player1.totalUpgradesAvailible;
-		String s3 = "exp: " + player1.currExp;
 
 		String s4 = "Damage: " + Bullet.dmg;
 		String s5 = "Speed: " + player1.maxSpeed;
@@ -242,12 +254,7 @@ public class GameObject {
 		String s9 = "Bullet Tier: " + player1.bulletTeir;
 
 		int x1 = (AppPanel.WIDTH - fm.stringWidth(s1)) / 2;
-		int x2 = (AppPanel.WIDTH - fm.stringWidth(s2)) / 2;
-		int x3 = (AppPanel.WIDTH - fm.stringWidth(s3)) / 2;
-
 		g2.drawString(s1, x1, 30);
-		g2.drawString(s2, x2, 60);
-		g2.drawString(s3, x3, 90);
 
 		g2.drawString(s4, 0, 30);
 		g2.drawString(s5, 0, 60);
@@ -288,6 +295,44 @@ public class GameObject {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void drawXPBar(Graphics2D g2) {
+		if (player1.totalUpgradesAvailible != 0) {
+			g2.setColor(Color.WHITE);
+			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
+			FontMetrics fm = g2.getFontMetrics();
+
+			String s2 = "Upgrades Availible: " + player1.totalUpgradesAvailible;
+			int x2 = (AppPanel.WIDTH - fm.stringWidth(s2)) / 2;
+			g2.drawString(s2, x2, AppPanel.HEIGHT - 70);
+		}
+		// Bar position & size
+		int barWidth = 300;
+		int barHeight = 25;
+		int x = (AppPanel.WIDTH - barWidth) / 2;
+		int y = AppPanel.HEIGHT - 50; // below score stats
+
+		// Percentage filled
+		float percent = Math.min(1.0f, (float) player1.currExp / player1.expToUpgrade);
+
+		// Background
+		g2.setColor(new Color(50, 50, 50, 180));
+		g2.fillRect(x, y, barWidth, barHeight);
+
+		// Filled portion
+		g2.setColor(new Color(0, 200, 255));
+		g2.fillRect(x, y, (int) (barWidth * percent), barHeight);
+
+		// Border
+		g2.setColor(Color.WHITE);
+		g2.drawRect(x, y, barWidth, barHeight);
+
+		// Text
+		g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
+		String text = player1.currExp + " / " + player1.expToUpgrade + " XP";
+		int textWidth = g2.getFontMetrics().stringWidth(text);
+		g2.drawString(text, x + (barWidth - textWidth) / 2, y + barHeight - 5);
 	}
 
 }

@@ -23,7 +23,7 @@ public class Exp extends Entity {
         this.gameObj = gameObj;
         this.value = (int) Math.ceil(value * valueMult);
 
-        radius = 5 + this.value * 2;
+        radius = (int) (2 + this.value * 1.3);
 
         dx = 0;
         dy = 0;
